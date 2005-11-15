@@ -1,0 +1,10 @@
+Package: metaArray
+Title: Meta-Analysis of Microarray Data
+Version: 1.1.0
+Author: Debashis Ghosh <ghoshd@umich.edu> Hyungwon Choi <hwchoi@umich.edu>
+Depends: MergeMaid
+Description: Two-step Meta Analysis of Microarray Data:
+             1) Transformation of Gene Expression Data to a fixed scale (MCMC/EM approaches)
+             2) Weighted Z-score after stabilizing mean-variance relation within platform
+Maintainer: Hyungwon Choi <hwchoi@umich.edu>
+License: LGPL2 

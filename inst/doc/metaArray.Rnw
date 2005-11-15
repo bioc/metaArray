@@ -1,0 +1,179 @@
+% NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is
+% likely to be overwritten.
+% \VignetteIndexEntry{metaArray Vignette}
+% \VignetteKeywords{meta-analysis, microarray, probability of expression}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt]{article}
+
+\usepackage{amsmath,fullpage,epsfig,psfig,graphicx, pstricks }
+\usepackage[authoryear,round]{natbib}
+\usepackage{hyperref}
+
+\parindent 0.2in  % Left justify
+
+\newcommand{\scscst}{\scriptscriptstyle}
+\newcommand{\scst}{\scriptstyle}
+
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+
+\bibliographystyle{plainnat}
+
+\title{metaArray package for meta-analysis of microarray data }
+
+\author{Debashis Ghosh and Hyungwon Choi}
+
+\begin{document}
+
+\maketitle
+
+
+\section*{Introduction}
+
+\Rpackage{metaArray} is a collection of functions for large-scale meta-analysis of microarray data. The implementation embodies the latent variable model approach described in \citet{Ghosh.2005}. The package is an ensemble of statistical tools from several research papers: 1) probability of expression (POE) with two estimation methods \citep{Parm.2002, Ghosh.2005}, 2) integrative correlation \citep{Parm.2004}, 3) posterior mean differential expression ($z$-statistic) \citep{Wang.2004}.  \par
+As the use of this package is for meta-analysis of microarray data, this documentation will demonstrate the features of the pacakge with an example of meta-analysis in cancer microarray data, the comparison of expression profiles in metastatic tumors and primary tumors. We gathered three microarray data from public databases, and the reference of the four related publications can be found in the bibliography. \par
+The synopsis of the analysis is straightforward: we transform each data into the scale of $[-1,1]$ by POE, filter genes based on integrative correlation, merge them into a single data, and perform final downstream analysis.  
+
+\section*{Data preparation and POE transformation}
+The object \texttt{mdata} in \Rpackage{metaArray} contains the four datasets mentioned above. The main goal of this analysis is to construct a signature of genes that distinguishes metastatic tumors from primary tumors with no future development into other types of cancers. \par
+The data included in the package went through some refinement. For we selected only the genes that appear in all four data, \texttt{mdata} contains 500 common and unique Unigene Cluster IDs. In realistic situation, this is hardly the case, thus here we assume the four data have non-overlapping genes. The package \Rpackage{MergeMaid} is particularly useful for merging such datasets with partially overlapping gene sets, or it can be done manually with a few more lines of command as shown below. \par
+In the following, we will first find the common genes and reorder genes in the order of appearance in the common geneset, transform each data to POE and store them into a single object of class \texttt{mergeExprs}. It takes 15 minutes on average to transform each of the three datasets (500 genes) to POE scale on 32-bit dual-processor Xeon (Intel x86) box. 
+<<echo=FALSE>>=
+if(!is.na(match("metaArray",dir("../../../mylib")))) library(metaArray, lib="../../../mylib")
+@
+<<>>=
+library(metaArray)
+data(mdata)
+## Finding intersection of gene sets
+common <- intersect(rownames(chen),rownames(garber)) 
+common <- intersect(common, rownames(lapointe))
+#common <- intersect(common, rownames(vantveer))
+
+chen <- chen[match(common, rownames(chen)),]
+garber <- garber[match(common, rownames(garber)),]
+lapointe <- lapointe[match(common, rownames(lapointe)),]
+#vantveer <- vantveer[match(common, rownames(vantveer)),]
+@ 
+<<eval=FALSE>>=
+## POE transformation
+#chen.poe <- poe.mcmc(AA=chen, NN=1-chen.spl$metastasis)$poe 
+#garber.poe <- poe.mcmc(AA=garber, NN=1-garber.spl$metastasis)$poe 
+#lapointe.poe <- poe.mcmc(AA=lapointe, NN=1-lapointe.spl$metastasis)$poe 
+#vantveer.poe <- poe.mcmc(AA=vantveer, NN=1-vantveer.spl$metastasis)$poe 
+## use poe.em for EM algorithm in place of MCMC
+@ 
+<<>>=
+## Data storage
+sample1 <- new('exprSet', exprs=as.matrix(chen.poe))
+pData(sample1) <- chen.spl
+sample2 <- new('exprSet', exprs=as.matrix(garber.poe))
+pData(sample2) <- garber.spl
+sample3 <- new('exprSet', exprs=as.matrix(lapointe.poe))
+pData(sample3) <- lapointe.spl
+#sample4 <- new('exprSet', exprs=as.matrix(vantveer.poe))
+#pData(sample4) <- vantveer.spl
+merged <- mergeExprs(sample1,sample2,sample3) #,sample4)
+@ 
+
+
+
+Now the object \texttt{merged} contains four expression data with corresponding phenotype data. If phenotypic label is either unknown or not of interest, one can skip specifying \texttt{NN} in the \texttt{poe.mcmc} function. The POE transformation using MCMC algorithm runs fairly long time, thus if fast computing is of concern, you may wish to use \texttt{poe.em} function instead of \texttt{poe.mcmc} function. We will further elaborate on the usage of the two functions shortly. If you prefer application of MCMC, we strongly encourage you to run this in batch mode (Linux/Unix). An example syntax is \\
+
+\noindent\texttt{genome> R $--$no-save < myscript.R \& } \\
+
+\noindent where \texttt{myscript.R} file contains the portion of the R code for POE transformation with \texttt{save.image} function attached at the end or inserted intermittently for safety. 
+
+\section*{Gene Filter and Downstream Analysis}
+The integrative correlation analysis \citep{Parm.2004} is a convenient tool to monitor the interstudy concordance of within-study correlations of gene expression. The gene-specific reproducibility score takes the correlation between each gene and all other genes within individual study and calculate the average correlation of these correlations across all pairs of studies. \par
+
+<<eval=FALSE>>=
+merged.cor <- intcor(merged)$avg.cor
+mData <- exprs(intersection(merged)); mCl <- NULL
+mData <- mData[merged.cor > median(merged.cor),]
+for(i in 1:length(merged)) {
+  mCl <- c(mCl, pData(merged[i])$metastasis)
+}
+@ 
+
+The function \texttt{intcor} is a modified version of \texttt{intCor} in \Rpackage{MergeMaid}. The original function efficiently calculates gene specific reproducibility scores by calculating correlation matrix only once so that it does not calculate correlation between two genes redundantly many times. When there exists a large common geneset among studies, R cannot allocate enough storage to the correlation matrix if it is of dimension higher than certain limit. Thus a brute-force computation of within-study correlation is inevitable for a large dataset, roughly around 2,000 common genes or more. The modified function \texttt{intcor} does this job without running into memory allocation problem regardless of size of common geneset. \par
+The above script hence calculates the gene specific reproducibility scores and filters the genes with higher score. The function \texttt{intersection} from \Rpackage{MergeMaid} merges all four data into a single \texttt{data.frame} object \texttt{mdata}. The class labels, the indicator of metastasis in our example, can also be saved into a single numeric vector as illustrated in the code above.\par
+Once the final data is formed, it is at the user's discretion to determine what downstream analysis is to be done. For instance, a simple two-sample $t$-statistic can be calculated easily (\Rpackage{multtest}). The risk-index approach in \citet{Ghosh.2005} is another option, and the \texttt{R} script for this method can be found in \url{http://www.umich.edu/~hwchoi/metaArray.html}
+
+
+\section*{Estimation of POE: MCMC versus EM}
+The detailed account of estimation with Gibbs sampling can be found in \citet{Parm.2002} and \citet{Ghosh.2005}. The estimation with EM algorithm is also explained in the latter. \par
+The POE with Gibbs sampling was initially implemented in Bioconductor package \Rpackage{POE}. Despite its novel structure, the functions \texttt{poe.fit} and \texttt{poe.one.iteration} in \Rpackage{POE} were written purely in \texttt{R}, and thus the order of computation for MCMC with large number of parameters becomes unmanageable quickly as the size of dataset grows. Under such context, we rewrote the \texttt{poe.one.iteration} in \texttt{C} language to boost the speed of posterior sampling, while directly importing the main skeleton of \texttt{poe.fit} function without modification. Hence all credits for the implementation remain to the authors of \Rpackage{POE} package, and the users interested in the function \texttt{poe.mcmc} should be referred to the vignette included in \Rpackage{POE}.    \par
+Meanwhile, the \texttt{poe.em} is a new function. This function is faster than \texttt{poe.mcmc}, but has the defect that it fits the probability model for each gene separately. One of the novel features of MCMC method is that the estimation for every single gene borrows information across all genes through posterior sampling of sample specific means and other hyperparameters. \par
+
+Another feature of the method using EM algorithm is that one can graphically inspect the fit for individual genes. See Figure 1 for an example. The upper left panel shows the fitted POE values plotted against the raw expression. The upper right panel shows the fitted mixture distribution for that gene. The lower left panel is the histogram of raw expression, and finally the lower right panel shows the trajectory of likelihood during the course of estimation. 
+\begin{center}
+<<fig=TRUE>>=
+em.draw(as.numeric(chen[1,]), cl=1-chen.spl$metastasis)
+@ 
+\end{center}
+The computation burden is much lighter for EM algorithm than MCMC. Run time is consequently shorter. Only a few minutes or less is required for very large datasets, for instance, ten thousand genes and one hundred samples. 
+
+\section*{Posterior Mean Differential Expression}
+The last tool in this package is an implementation of the method illustrated in \citet{Wang.2004}. The main idea is that one can use data from one study to construct a prior distribution of differential expression and thus utilize the posterior mean differential expression, weighted by variances, whose distribution is standard normal distribution due to classic Bayesian probability calculation. To apply this method,
+<<>>=
+z.stat <- Zscore(merged)
+@ 
+where \texttt{merged} is a \texttt{mergeExprSet} object created the same way earlier, but without the POE transformation. The resulting vector of $z$-scores may be compared to other downstream analysis based on POE transformation. If one wishes to generate permutation distribution to determine significance of the observed statistic, replacing \texttt{permute=0} with \texttt{permute=10000} will generate permutation distribution of $z$-statistic by permuting class labels within all studies 10,000 times..
+
+\section*{Discussion}
+We have implemented an ensemble of statistical techniques that assist certain aspects of meta-analysis of microarray data. The main thrust of this package is the set of two estimation methods for the data transformation into probability of expression (POE). \par
+There are other methods and software packages that implement meta-analytic methods from other research papers. For example, a model based effect-size approach from \citet{Choi.2003} was embodied in Bioconductor package \Rpackage{GeneMeta} by \citet{Lusa.2004}. We recommend users to compare sensitivity of the analyses by using a variety of approaches as they become available. \par
+The strengths of our implementation are the following. 1) it allows us to combine multiple data with denoising effect and enables us to apply final downstream analysis of any sort with ease, 2) scale-free expression enhances sensitivity of differential expression when the overall variation of expression is relatively ignorable on its raw scale.  
+
+
+\begin{thebibliography}{}
+
+\bibitem[Choi et al.(2005)]{Ghosh.2005} Choi H, Shen R, Chinnaiyan A, Ghosh D.
+\newblock Latent variable modelling for combining genomic data from multiple studies
+\newblock\textit{Unpublished manuscript} (2005).
+
+\bibitem[Lusa et al.(2004)]{Lusa.2004} Lusa L, Gentleman R, Ruschhaupt M.
+\newblock \Rpackage{GeneMeta} A collection of meta-analysis tools for analysing high throughput experimental data
+\newblock\textit{A bioconductor package}
+
+\bibitem[Choi et al.(2003)]{Choi.2003} Choi J.K, Yu U, Kim S, Yoo O.J.
+\newblock Combining multiple microarray studies and modeling interstudy variation
+\newblock\textit{Bioinformatics} 19:84--90 (2003).
+
+\bibitem[Parmigiani et al.(2002)]{Parm.2002} Parmigiani G, Garrett E.S, Anbazhagan R., Gabrielson E.
+\newblock A statistical framework for expression-based molecular classification in cancer. 
+\newblock\textit{JRSS B} 64, 717 -- 736 (2002).
+
+\bibitem[Parmigiani et al.(2004)]{Parm.2004} Parmigiani G, Garrett-Mayer E.S, Anbazhagan R, Gabrielson E.
+\newblock A cross-study comparison of gene expression studies for the molecular classification of lung cancer.
+\newblock\textit{Clinical Cancer Research} 10: 2922--2927 (2004).
+
+\bibitem[Wang et al.(2004)]{Wang.2004} Wang J, Coombes K.R, Highsmith W.E, Keating M.J, Abruzzo L.V.
+\newblock Differences in gene expression between B-cell chronic lymphocytic leukemia and normal B cells: a meta-analysis of three micorarray studies.
+\newblock\textit{Bioinformatics} 20(17): 3166--3178 (2004).
+
+\bibitem[Chen et al.(2002)]{Chen.2002} Chen X et al.
+\newblock Gene expression patterns in human liver cancers.
+\newblock\textit{Mol. Biol. Cell} 13(6): 1929--1939
+ 
+\bibitem[Garber et al.(2001)]{Garber.2001} Garber M et al.
+\newblock Diversity of gene expression in adenocarcinoma of the lung
+\newblock\textit{PNAS} 98(24): 13784--13789
+
+\bibitem[Lapointe et al.(2004)]{Lapointe.2004} Lapointe J et al.
+\newblock Gene expression profiling identifies clinically relevant subtypes of prostate cancer
+\newblock\textit{PNAS} 101(3): 811--816
+
+%\bibitem[van't Veer et al.(2002)]{Veer.2002} van't Veer L et al.
+%\newblock Gene expression profiling predicts clinical outcome of breast cancer
+%\newblock\textit{Nature} 2002 Jan 31; 415(6871):530--6.
+
+\end{thebibliography}
+
+
+
+
+\end{document}
