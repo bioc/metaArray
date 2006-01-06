@@ -23,12 +23,12 @@
 /***********************/
 /***********************/
 
-contr(double *exprs, int *labels, int *nd, int *nr, int *nc, int *numperm, double *z, double *p)
+void contr(double *exprs, int *labels, int *nd, int *nr, int *nc, int *numperm, double *z, double *p)
 {
   /***********************************/
   /*** Variable declaration        ***/
   /***********************************/
-  int i,j,k;
+  int i;
   ARRAY2 data[*nd];  
 
   /***********************************/

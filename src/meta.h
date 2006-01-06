@@ -233,6 +233,9 @@ double vec_var(const double *vec, int len);
 double log_posterior_gamma(const double a, const double b, const double *sigma_g, const int len);
 double log_posterior_kappa(const double kappa, const double *xxx, const int len, const double sigma_g, const double pi_g, const double kr);
 void calcor(const double *x, const double *y, const int len, double *num);
+void lowess(double *x, double *y, int *n,	double *f, int *nsteps, double *delta, double *ys, double *rw, double *res);
+
+
 
 /***************************/
 /*      Main functions     */

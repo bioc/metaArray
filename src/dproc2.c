@@ -134,11 +134,11 @@ void init_ARRAYS(double *exprs, int *ndata, int *nrow, int *ncol, int *labels, A
 
 void do_LOWESS(double *x, double *y, int len) 
 {
-  static double *tmp, *tx, *ty;
+  static double *tx, *ty /* *tmp  */ ;
   static double *ys, *rw, *res;
   static int *ind;
   static int i,j, nsteps,k;
-  static double max, min, delta, f;
+  static double delta, f /* max, min  */;
   f=2.0/3.0;
   delta = (vec_max(x,len)-vec_min(x,len))*0.01;
   nsteps=3;

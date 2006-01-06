@@ -20,14 +20,14 @@
 /***********************/
 /***********************/
 
-poe_fit(double *expr, int *label, double *prior, double *posterior, int *nrow, int *ncol, int *numiter, double *avgpos)
+void poe_fit(double *expr, int *label, double *prior, double *posterior, int *nrow, int *ncol, int *numiter, double *avgpos)
 {
   ARRAY data;  
   PR pr;
   PP pp;
   PP res;
   CH ch;
-  int i,j,k,mm;
+  int k,mm;
   /**********************/
   /*** initialization ***/
   /**********************/
@@ -71,14 +71,14 @@ poe_fit(double *expr, int *label, double *prior, double *posterior, int *nrow, i
   PutRNGstate();
 }
 
-poe_fit_2(double *expr, int *label, double *prior, double *posterior, int *nrow, int *ncol, int *numiter, double *avgpos)
+void poe_fit_2(double *expr, int *label, double *prior, double *posterior, int *nrow, int *ncol, int *numiter, double *avgpos)
 {
   ARRAY data;  
   PR pr;
   PP pp;
   PP res;
-  CH ch;
-  int i,j,k,mm;
+  /* CH ch; */
+  int k,mm;
   /**********************/
   /*** initialization ***/
   /**********************/
@@ -139,7 +139,7 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
   double kappa_min, tmp, tmpq;
   double succpos, succneg;
   double tmp1, tmp2, tmp3, tmp4;
-  double gamma_new, mu;
+  double gamma_new; /*, mu */
   
   /*************************************/
   /*** memory set and initialization ***/
@@ -309,7 +309,7 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
     tmp1=0.0;
     for(i=0;i<nr;i++) tmp1+=(ee[i][tt]*sign(ee[i][tt]));
     nnn=((double) nr)-tmp1;
-    if(!ISNA(nnn) & nnn>0.0) {
+    if((!ISNA(nnn)) & (nnn>0.0)) {
       ct=0;
       for(i=0;i<nr;i++) ct+=((int) (ee[i][tt]==0.0));
       sss=(double *) Calloc(ct,double);
