@@ -21,7 +21,7 @@ function(x, cl, threshold=0.00001){
   }
   z[id == 1] <- 1
   a <- min(x,na.rm=T); b <- max(x,na.rm=T)
-  a <- a - (b-a)*.001; b <- b + (b-a)*.001  
+  a <- a - (b-a)*.0001; b <- b + (b-a)*.0001  
   err <- err.old <- 1
   pi <- sum(z) / tt 
   mu <- sum((1-z)*x2) / sum(1-z)
