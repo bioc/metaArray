@@ -10,11 +10,11 @@
 }
 \arguments{
   \item{x}{A numeric vector, especially expression values for a particular gene. }
-  \item{cl}{A vector of 0s and 1s. Use 1 for normal phenotype and 0 for
-    non-normal phenotype. If left blank, all samples will be labeled as
-    normal phenotype. Normal component of mixture is estimated using
-    samples with normal phenotype only. POE for samples with non-normal
-    phenotype will be calculated after EM algorithm finishes ML estimation.}
+  \item{cl}{A vector of 0s and 1s. Use 0 for normal phenotype and 1 for
+    non-normal phenotype. Note that this is the opposite of POE MCMC. If 
+    left blank, all samples will be labeled as normal phenotype. When 
+    class information is provided, conditional estimation of the mixture 
+    is applied and POE is estimated unconditionally. }
   \item{threshold}{Criterion for convergence in likelihood }
 }
 \value{
@@ -33,6 +33,6 @@
 }
 \author{Debashis Ghosh <ghoshd@umich.edu>, Hyungwon Choi <hwchoi@umich.edu> }
 \examples{
-
+  
 }
 \keyword{internal}

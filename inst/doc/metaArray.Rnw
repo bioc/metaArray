@@ -42,7 +42,7 @@ The object \texttt{mdata} in \Rpackage{metaArray} contains the four datasets men
 The data included in the package went through some refinement. For we selected only the genes that appear in all four data, \texttt{mdata} contains 500 common and unique Unigene Cluster IDs. In realistic situation, this is hardly the case, thus here we assume the four data have non-overlapping genes. The package \Rpackage{MergeMaid} is particularly useful for merging such datasets with partially overlapping gene sets, or it can be done manually with a few more lines of command as shown below. \par
 In the following, we will first find the common genes and reorder genes in the order of appearance in the common geneset, transform each data to POE and store them into a single object of class \texttt{mergeExprs}. It takes 15 minutes on average to transform each of the three datasets (500 genes) to POE scale on 32-bit dual-processor Xeon (Intel x86) box. 
 <<echo=FALSE>>=
-if(!is.na(match("metaArray",dir("../../../mylib")))) library(metaArray, lib="../../../mylib")
+if(!is.na(match("metaArray",dir("../../../../mylib")))) library(metaArray, lib="../../../../mylib")
 @
 <<>>=
 library(metaArray)
@@ -111,7 +111,7 @@ Meanwhile, the \texttt{poe.em} is a new function. This function is faster than \
 Another feature of the method using EM algorithm is that one can graphically inspect the fit for individual genes. See Figure 1 for an example. The upper left panel shows the fitted POE values plotted against the raw expression. The upper right panel shows the fitted mixture distribution for that gene. The lower left panel is the histogram of raw expression, and finally the lower right panel shows the trajectory of likelihood during the course of estimation. 
 \begin{center}
 <<fig=TRUE>>=
-em.draw(as.numeric(chen[1,]), cl=1-chen.spl$metastasis)
+em.draw(as.numeric(chen[1,]), cl=chen.spl$metastasis)
 @ 
 \end{center}
 The computation burden is much lighter for EM algorithm than MCMC. Run time is consequently shorter. Only a few minutes or less is required for very large datasets, for instance, ten thousand genes and one hundred samples. 
