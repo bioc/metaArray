@@ -41,10 +41,7 @@ The synopsis of the analysis is straightforward: we transform each data into the
 The object \texttt{mdata} in \Rpackage{metaArray} contains the four datasets mentioned above. The main goal of this analysis is to construct a signature of genes that distinguishes metastatic tumors from primary tumors with no future development into other types of cancers. \par
 The data included in the package went through some refinement. For we selected only the genes that appear in all four data, \texttt{mdata} contains 500 common and unique Unigene Cluster IDs. In realistic situation, this is hardly the case, thus here we assume the four data have non-overlapping genes. The package \Rpackage{MergeMaid} is particularly useful for merging such datasets with partially overlapping gene sets, or it can be done manually with a few more lines of command as shown below. \par
 In the following, we will first find the common genes and reorder genes in the order of appearance in the common geneset, transform each data to POE and store them into a single object of class \texttt{mergeExprs}. It takes 15 minutes on average to transform each of the three datasets (500 genes) to POE scale on 32-bit dual-processor Xeon (Intel x86) box. 
-<<echo=FALSE>>=
-if(!is.na(match("metaArray",dir("../../../../mylib")))) library(metaArray, lib="../../../../mylib")
-@
-<<>>=
+<<echo=TRUE>>=
 library(metaArray)
 data(mdata)
 ## Finding intersection of gene sets

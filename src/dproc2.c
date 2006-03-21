@@ -14,7 +14,6 @@
 #include <stdarg.h>
 #include <Rmath.h>
 #include "meta.h"
-/* #include "meta2.h" */
 
 /***********************/
 /* Memory allocation   */
@@ -203,6 +202,7 @@ void weighted_contrast(ARRAY2 data[], int *nd, double *z, int *nrow) {
   Free(denom);
 }
 
+
 void permute_pval(ARRAY2 data[], int *nd, int *nr, int *nc, int *numperm, double *z,double *p) {
   double **permu;
   double *zz;
@@ -222,9 +222,7 @@ void permute_pval(ARRAY2 data[], int *nd, int *nr, int *nc, int *numperm, double
   for(i=0;i<*nd;i++) {
     for(j=0;j<nc[i];j++) {
       cl[i][j] = data[i].label[j];
-      /*      Rprintf("%i", cl[i][j]); */
     }
-    /*    Rprintf("%s", "\n"); */
   }
   
   /**************************************************************/
@@ -239,9 +237,7 @@ void permute_pval(ARRAY2 data[], int *nd, int *nr, int *nc, int *numperm, double
     for(i=0;i<*nd;i++) {
       perm(cl[i],data[i].label,nc[i]);
       get_meanvar(&(data[i]));
-      /* for(j=0;j<nc[i];j++) Rprintf("%i",data[i].label[j]); */
     }     
-    /* Rprintf("%f", data[0].mean0[0]); */
     for(i=0;i<*nr;i++) zz[i]=0.0;
     weighted_contrast(data, nd, zz, nr); 
     for(i=0;i<*nr;i++) {
@@ -252,7 +248,6 @@ void permute_pval(ARRAY2 data[], int *nd, int *nr, int *nc, int *numperm, double
   for(i=0;i<*nr;i++) {
     for(j=0;j<*numperm;j++) {
       tmp = permu[j][i] > z[i] ? 1 : 0 ;
-      /*  Rprintf("%f", permu[j][i]); */
       p[i] += ((double) tmp) /((double) *numperm) ;
     }
   } 
@@ -263,3 +258,6 @@ void permute_pval(ARRAY2 data[], int *nd, int *nr, int *nc, int *numperm, double
   Free(zz);
 
 }
+
+
+

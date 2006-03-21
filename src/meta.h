@@ -187,15 +187,6 @@ void vec2PR(double *vec, PR *pr);
 /* all elements of each struct to zero */ 
 /***************************************/
 void init_PP(PP *pp, int *nrow, int *ncol);
-/* void init_CH(CH *ch, int *nrow, int *ncol); */
-
-
-/*********************************/
-/* Binary operations for structs */
-/*********************************/
-/* void add_PP(PP *pp1, PP *pp2, int *niter); */
-/* void divide_PP(PP *pp, int *niter); */
-
 
 /*****************************************/
 /* Converts PP as a numeric vector in    */
@@ -236,12 +227,12 @@ void calcor(const double *x, const double *y, const int len, double *num);
 void lowess(double *x, double *y, int *n,	double *f, int *nsteps, double *delta, double *ys, double *rw, double *res);
 
 
-
 /***************************/
 /*      Main functions     */
 /***************************/
 void poe_one_iter(ARRAY *expr, PR *pr, PP *pp);
-/* poe_fit(double *expr, int *label, double *prior, double *posterior, int *nrow, int *ncol, int *numiter, double *avgpos); */
-/* poe_fit_2(double *expr, int *label, double *prior, double *posterior, int *nrow, int *ncol, int *numiter, double *avgpos); */
+
+
+
 
 

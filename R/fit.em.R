@@ -1,11 +1,12 @@
 "fit.em" <-
-function(x, cl=rep(0,length(x)), threshold=0.0001){ 
+function(x, cl=NULL, threshold=0.0001){ 
   conv <- T
   dec <- F
   abnormal <- F
   x <- as.numeric(x)
   tt <- length(x)
   z <- rep(0,length(x))
+  if(is.null(cl)) cl <- rep(0, length(x))
   if(all(cl==0)) id <- find.init(x)
   else id <- cl    
   log.lik <- 1000

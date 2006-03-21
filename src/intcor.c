@@ -17,9 +17,7 @@
 #include "meta.h"
 
 /***********************/
-/***********************/
 /*   Main functions    */
-/***********************/
 /***********************/
 
 void intcor(double *exprs, int *labels, int *nd, int *nr, int *nc, double *correl, double *paircor)
@@ -85,12 +83,13 @@ void intcor(double *exprs, int *labels, int *nd, int *nr, int *nc, double *corre
         correl[i]+=tmp;
         ct++;
       }
-    }
     if((i%100==0) & (i>0)) Rprintf("%i%s", i, " ");
     if((i%1000==0) & (i>0)) Rprintf("%s", "\n");
+    }
   }
   for(i=0;i<*nd;i++) Free(vec[i]);
   Free(vec); 
   for(i=0;i<*nd;i++) free_array2(&(data[i]));
-  Rprintf("%s", "\n");
 }
+
+

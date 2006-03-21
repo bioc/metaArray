@@ -152,3 +152,5 @@ void calcor(const double *x, const double *y, const int len, double *num)
   correl = t0 / (sqrt(t1) * sqrt(t2));
   *num = correl;
 }
+
+

@@ -15,12 +15,9 @@
 #include <assert.h>
 #include <Rmath.h>
 #include "meta.h"
-/* #include "meta2.h" */
 
 /***********************/
-/***********************/
 /*   Main functions    */
-/***********************/
 /***********************/
 
 void contr(double *exprs, int *labels, int *nd, int *nr, int *nc, int *numperm, double *z, double *p)
@@ -35,8 +32,6 @@ void contr(double *exprs, int *labels, int *nd, int *nr, int *nc, int *numperm, 
   /*** initialization of ARRAYS    ***/
   /*** calculates mu and stdev     ***/
   /***********************************/
-  /* init_MARRAY(exprs,nd,nr,nc,labels,&data); */
-  /* Rprintf("%s", "Memory allocation for meta-arrays\n"); */
   init_ARRAYS(exprs,nd,nr,nc,labels,data);  
   
   /************************************/
@@ -47,7 +42,6 @@ void contr(double *exprs, int *labels, int *nd, int *nr, int *nc, int *numperm, 
     do_LOWESS(data[i].mean0,data[i].var0,*nr);        
     do_LOWESS(data[i].mean1,data[i].var1,*nr);
   }
-  /* Rprintf("%f %f %f %f", data[0].mean0[0],data[0].mean1[0],data[0].var0[0],data[0].var1[0]); */
   weighted_contrast(data, nd, z, nr); 
 
   /****************************************/
@@ -72,3 +66,6 @@ void contr(double *exprs, int *labels, int *nd, int *nr, int *nc, int *numperm, 
 
   for(i=0;i<*nd;i++) free_array2(&(data[i]));
 }
+
+
+
