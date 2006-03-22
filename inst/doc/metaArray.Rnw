@@ -39,43 +39,30 @@ The synopsis of the analysis is straightforward: we transform each data into the
 
 \section*{Data preparation and POE transformation}
 The object \texttt{mdata} in \Rpackage{metaArray} contains the four datasets mentioned above. The main goal of this analysis is to construct a signature of genes that distinguishes metastatic tumors from primary tumors with no future development into other types of cancers. \par
-The data included in the package went through some refinement. For we selected only the genes that appear in all four data, \texttt{mdata} contains 500 common and unique Unigene Cluster IDs. In realistic situation, this is hardly the case, thus here we assume the four data have non-overlapping genes. The package \Rpackage{MergeMaid} is particularly useful for merging such datasets with partially overlapping gene sets, or it can be done manually with a few more lines of command as shown below. \par
-In the following, we will first find the common genes and reorder genes in the order of appearance in the common geneset, transform each data to POE and store them into a single object of class \texttt{mergeExprs}. It takes 15 minutes on average to transform each of the three datasets (500 genes) to POE scale on 32-bit dual-processor Xeon (Intel x86) box. 
+The data included in the package went through some refinement. First of all, all three datasets have been transformed to POE scale using MCMC method. For we selected only the genes that appear in all three datasets, \texttt{mdata} contains 500 common and unique Unigene Cluster IDs. In realistic situation, this is hardly the case, thus here we assume the four data have non-overlapping genes. The package \Rpackage{MergeMaid} is particularly useful for merging such datasets with partially overlapping gene sets, or it can be done manually with a few more lines of command as shown below. \par
+In the following, let us first find the common genes and reorder genes in the order of appearance in the common geneset, transform each data to POE and store them into a single object of class \texttt{mergeExprs}. It takes 15 minutes on average to transform each of the three datasets (500 genes) to POE scale using MCMC on 32-bit dual-processor Xeon (Intel x86) box. 
 <<echo=TRUE>>=
 library(metaArray)
+library(Biobase)
+library(MergeMaid)
 data(mdata)
-## Finding intersection of gene sets
-common <- intersect(rownames(chen),rownames(garber)) 
-common <- intersect(common, rownames(lapointe))
-#common <- intersect(common, rownames(vantveer))
-
-chen <- chen[match(common, rownames(chen)),]
-garber <- garber[match(common, rownames(garber)),]
-lapointe <- lapointe[match(common, rownames(lapointe)),]
-#vantveer <- vantveer[match(common, rownames(vantveer)),]
+common <- intersect(rownames(chen.poe),rownames(garber.poe)) 
+common <- intersect(common, rownames(lapointe.poe))
+chen.poe <- chen.poe[match(common, rownames(chen.poe)),]
+garber.poe <- garber.poe[match(common, rownames(garber.poe)),]
+lapointe.poe <- lapointe.poe[match(common, rownames(lapointe.poe)),]
+vars <- list("var1","var2")
+names(vars) <- names(chen.spl)
+pdata1 <- new("phenoData", pData = chen.spl, varLabels = vars)
+sample1 <- new("exprSet", exprs=chen.poe, phenoData = pdata1)
+names(vars) <- names(garber.spl)
+pdata2 <- new("phenoData", pData = garber.spl, varLabels = vars)
+sample2 <- new("exprSet", exprs=garber.poe, phenoData = pdata2)
+names(vars) <- names(lapointe.spl)
+pdata3 <- new("phenoData", pData = lapointe.spl, varLabels = vars)
+sample3 <- new("exprSet", exprs=lapointe.poe, phenoData = pdata3)
+merged <- mergeExprs(sample1,sample2,sample3)
 @ 
-<<eval=FALSE>>=
-## POE transformation
-#chen.poe <- poe.mcmc(AA=chen, NN=1-chen.spl$metastasis)$poe 
-#garber.poe <- poe.mcmc(AA=garber, NN=1-garber.spl$metastasis)$poe 
-#lapointe.poe <- poe.mcmc(AA=lapointe, NN=1-lapointe.spl$metastasis)$poe 
-#vantveer.poe <- poe.mcmc(AA=vantveer, NN=1-vantveer.spl$metastasis)$poe 
-## use poe.em for EM algorithm in place of MCMC
-@ 
-<<>>=
-## Data storage
-sample1 <- new('exprSet', exprs=as.matrix(chen.poe))
-pData(sample1) <- chen.spl
-sample2 <- new('exprSet', exprs=as.matrix(garber.poe))
-pData(sample2) <- garber.spl
-sample3 <- new('exprSet', exprs=as.matrix(lapointe.poe))
-pData(sample3) <- lapointe.spl
-#sample4 <- new('exprSet', exprs=as.matrix(vantveer.poe))
-#pData(sample4) <- vantveer.spl
-merged <- mergeExprs(sample1,sample2,sample3) #,sample4)
-@ 
-
-
 
 Now the object \texttt{merged} contains four expression data with corresponding phenotype data. If phenotypic label is either unknown or not of interest, one can skip specifying \texttt{NN} in the \texttt{poe.mcmc} function. The POE transformation using MCMC algorithm runs fairly long time, thus if fast computing is of concern, you may wish to use \texttt{poe.em} function instead of \texttt{poe.mcmc} function. We will further elaborate on the usage of the two functions shortly. If you prefer application of MCMC, we strongly encourage you to run this in batch mode (Linux/Unix). An example syntax is \\
 
@@ -115,7 +102,7 @@ The computation burden is much lighter for EM algorithm than MCMC. Run time is c
 
 \section*{Posterior Mean Differential Expression}
 The last tool in this package is an implementation of the method illustrated in \citet{Wang.2004}. The main idea is that one can use data from one study to construct a prior distribution of differential expression and thus utilize the posterior mean differential expression, weighted by variances, whose distribution is standard normal distribution due to classic Bayesian probability calculation. To apply this method,
-<<>>=
+<<eval=FALSE>>=
 z.stat <- Zscore(merged)
 @ 
 where \texttt{merged} is a \texttt{mergeExprSet} object created the same way earlier, but without the POE transformation. The resulting vector of $z$-scores may be compared to other downstream analysis based on POE transformation. If one wishes to generate permutation distribution to determine significance of the observed statistic, replacing \texttt{permute=0} with \texttt{permute=10000} will generate permutation distribution of $z$-statistic by permuting class labels within all studies 10,000 times..

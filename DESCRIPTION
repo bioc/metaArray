@@ -1,12 +1,12 @@
 Package: metaArray
 Title: Integration of Microarray Data for Meta-analysis
-Version: 1.1.3
+Version: 1.1.5
 Author: Debashis Ghosh <ghoshd@umich.edu> Hyungwon Choi <hwchoi@umich.edu>
 Depends: MergeMaid
 biocViews: Microarray, Statistics, DifferentialExpression
-Description: 1) Data Transformation for Meta Analysis of Microarray Data:
-                 Transformation of Gene Expression Data to a fixed scale (MCMC/EM methods)
-             2) Combined Differential Expression on raw scale:
+Description: 1) Data transformation for meta-analysis of microarray Data:
+                 Transformation of gene expression data to signed probability scale (MCMC/EM methods)
+             2) Combined differential expression on raw scale:
                  Weighted Z-score after stabilizing mean-variance relation within platform
 Maintainer: Hyungwon Choi <hwchoi@umich.edu>
 License: LGPL2 
