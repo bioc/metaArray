@@ -71,6 +71,51 @@ void poe_fit(double *expr, int *label, double *prior, double *posterior, int *nr
 }
 
 
+void poe_fit_2(double *expr, int *label, double *prior, double *posterior, int *nrow, int *ncol, int *numiter, double *avgpos)
+{
+  ARRAY data;  
+  PR pr;
+  PP pp;
+  PP res;
+  /* CH ch; */
+  int k,mm;
+  /**********************/
+  /*** initialization ***/
+  /**********************/
+  init_ARRAY(expr,nrow,ncol,label,&data);
+  vec2PR(prior, &pr);
+  vec2PP(posterior,&pp,nrow,ncol);   
+  init_PP(&res,nrow,ncol);
+  /* malloc_CH(&ch,nrow,ncol,numiter); */ 
+  GetRNGstate();
+  /**************************************************/
+  /*** loop: MC iterate M times while summarizing ***/
+  /**************************************************/
+  /* Rprintf("%s", "Begin Iteration after BurnIn\n"); */
+  for(mm=0;mm<*numiter;mm++) {
+    if(_SKIP_>0) {
+      for(k=0;k<_SKIP_;k++) poe_one_iter(&data,&pr,&pp); 
+    }
+    poe_one_iter(&data,&pr,&pp);
+    /*  update_CH(&ch,&pp,mm,numiter,nrow,ncol);    
+    if((mm+1)%50==0) Rprintf("%i%s",(mm+1), " ");
+    if((mm+1)%1000==0) Rprintf("%s","\n"); */
+  }
+  /***********************************************/
+  /*** Summarize posterior estimates by median ***/
+  /***********************************************/
+  /* Rprintf("%s", "Summarizing Posterior by Median\n");
+     median_CH(&ch,&res,mm,nrow,ncol);      
+     PP2vec(avgpos,&res,nrow,ncol); */
+  PP2vec(avgpos, &pp,nrow,ncol);
+  /*  Rprintf("%s", "Freeing memories\n"); */
+  free_array(&data);
+  free_PP(&pp,nrow);
+  free_PP(&res,nrow);
+  /* free_CH(&ch,nrow,ncol,numiter); */
+  PutRNGstate();
+}
+
 void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
 {
   /**********************/
