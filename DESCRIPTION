@@ -1,6 +1,6 @@
 Package: metaArray
 Title: Integration of Microarray Data for Meta-analysis
-Version: 1.1.5
+Version: 1.2.0
 Author: Debashis Ghosh <ghoshd@umich.edu> Hyungwon Choi <hwchoi@umich.edu>
 Depends: MergeMaid
 biocViews: Microarray, Statistics, DifferentialExpression

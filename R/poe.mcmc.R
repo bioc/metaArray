@@ -2,7 +2,7 @@
 function (AA, NN = NULL, id = NULL, M = 2000, kap.min=3.0,
     logdata=F,     stepsize = 0.5, 
     centersample = T, centergene = T, generatestarts = T, start.method = 1, 
-    startobject = R0, collapse.to.two = T,
+    startobject = R0, collapse.to.two = T, burnin = 200,
     collapse.window=50,converge.threshold=0.01,
     PR = list(alpha.mm = 0, alpha.sd = 100, mu.mm = 0, mu.sd = 100, 
         pipos.mm = 0, pipos.sd = 100, pineg.mm = 0, pineg.sd = 100, 
@@ -10,7 +10,7 @@ function (AA, NN = NULL, id = NULL, M = 2000, kap.min=3.0,
 {
     TT <- ncol(AA)
     GG <- nrow(AA)
-    tmp.poemat <- rep(0,GG*TT)
+    tmp.poemat <- matrix(0,GG,TT)
     if (!is.null(NN) & length(NN) != TT) {
         stop("Length of NN should be the same as ncol(AA)")
     }
@@ -223,7 +223,7 @@ function (AA, NN = NULL, id = NULL, M = 2000, kap.min=3.0,
   avgpos <- rep(0,GG*(3*TT+6)+TT+11)
   res <- .C("poe_fit",as.matrix(AA),as.integer(NN),
        as.double(new.PR),as.double(new.PP),as.integer(GG),
-       as.integer(TT),as.integer(M),
+       as.integer(TT),as.integer(M),as.integer(burnin),
        avgpos=as.double(avgpos), PACKAGE="metaArray")$avgpos
   alpha <- res[1:TT]
   mug <- res[(TT+1):(TT+GG)]
