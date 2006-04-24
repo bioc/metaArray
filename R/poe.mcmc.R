@@ -1,8 +1,8 @@
 "poe.mcmc" <-
 function (AA, NN = NULL, id = NULL, M = 2000, kap.min=3.0,
-    logdata=F,     stepsize = 0.5, 
-    centersample = T, centergene = T, generatestarts = T, start.method = 1, 
-    startobject = R0, collapse.to.two = T, burnin = 200,
+    logdata=FALSE,     stepsize = 0.5, 
+    centersample = TRUE, centergene = TRUE, generatestarts = TRUE, start.method = 1, 
+    startobject = R0, collapse.to.two = TRUE, burnin = 200,
     collapse.window=50,converge.threshold=0.01,
     PR = list(alpha.mm = 0, alpha.sd = 100, mu.mm = 0, mu.sd = 100, 
         pipos.mm = 0, pipos.sd = 100, pineg.mm = 0, pineg.sd = 100, 
@@ -16,11 +16,11 @@ function (AA, NN = NULL, id = NULL, M = 2000, kap.min=3.0,
     }
     if(is.na(sum(as.vector(AA))))
       stop("NA values not allowed in AA matrix. Remove rows with NA values and retry.")
-    if (logdata == T) 
+    if (logdata == TRUE) 
         AA <- log(AA)
-    if (is.null(id) == T) 
+    if (is.null(id) == TRUE) 
         id <- as.character(1:GG)
-    if (is.null(NN) == T) 
+    if (is.null(NN) == TRUE) 
         NN <- rep(0, TT)
     if (centersample) {
         sammed <- apply(AA, 2, median)
@@ -30,7 +30,7 @@ function (AA, NN = NULL, id = NULL, M = 2000, kap.min=3.0,
         genmed <- apply(AA, 1, median)
         AA <- sweep(AA, 1, genmed)
     }
-    if (generatestarts == T) {
+    if (generatestarts == TRUE) {
         alpha0 <- apply(AA, 2, mean)
         mats <- t(apply(AA, 1, sort))
         mug0 <- sigmag0 <- kappaposg0 <- kappanegg0 <- rep(NA, 
@@ -134,7 +134,7 @@ function (AA, NN = NULL, id = NULL, M = 2000, kap.min=3.0,
             kap.neg.rate = 1/mean(kappanegg0), poe=tmp.poemat, phat.pos=tmpmat, 
             phat.neg=tmpmat, accept = 0)
     }
-    if (generatestarts == F) {
+    if (generatestarts == FALSE) {
         mmm <- length(startobject$gamma)
         PP <- list(alpha = startobject$alpha[mmm, ], mug = startobject$mug[mmm, 
             ], kappaposg = startobject$kappaposg[mmm, ], kappanegg = startobject$kappanegg[mmm, 
@@ -207,10 +207,10 @@ function (AA, NN = NULL, id = NULL, M = 2000, kap.min=3.0,
                PP$phat.pos[gg, ] <- abs(PP$poe[gg, ])
                PP$poe[gg,] <-abs(PP$poe[gg,])
                ee <- round(PP$poe[gg,])
-               PP$mug[gg] <- mean(AA[gg,ee==0],na.rm=T)
+               PP$mug[gg] <- mean(AA[gg,ee==0],na.rm=TRUE)
                PP$piposg[gg] <- mean(ifelse(ee==1,1,0))
                PP$pinegg[gg] <- mean(ifelse(ee==-1,1,0))
-               PP$sigmag[gg] <- sqrt(var(AA[gg,ee==0],na.rm=T))
+               PP$sigmag[gg] <- sqrt(var(AA[gg,ee==0],na.rm=TRUE))
                PP$kappanegg[gg] <- kap.min*PP$sigmag[gg]
                PP$kappaposg[gg] <- kap.min*PP$sigmag[gg]
           }

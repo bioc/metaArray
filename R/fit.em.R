@@ -1,8 +1,8 @@
 "fit.em" <-
 function(x, cl=NULL, threshold=0.0001){ 
-  conv <- T
-  dec <- F
-  abnormal <- F
+  conv <- TRUE
+  dec <- FALSE
+  abnormal <- FALSE
   x <- as.numeric(x)
   tt <- length(x)
   z <- rep(0,length(x))
@@ -13,14 +13,14 @@ function(x, cl=NULL, threshold=0.0001){
   lik.rec <- NULL
   num.iter <- 0
   if(all(id==1) | all(id==0)) {
-    conv <- F
-    abnormal <- T
+    conv <- FALSE
+    abnormal <- TRUE
     lik.rec <- 0
   }
   if(all(cl==0)) z[id == 1] <- 1
   else z <- cl/2
 
-  a <- min(x,na.rm=T); b <- max(x,na.rm=T)
+  a <- min(x,na.rm=TRUE); b <- max(x,na.rm=TRUE)
   #a <- a - (b-a)*.001; b <- b + (b-a)*.001  
   err <- err.old <- 1
 
@@ -30,7 +30,7 @@ function(x, cl=NULL, threshold=0.0001){
   mu <- sum((1-z)*x) / sum(1-z)
   sigmasq <- sum((1-z)*(x-mu)^2) / sum(1-z)
 
-  while(err > threshold & conv == T) {
+  while(err > threshold & conv == TRUE) {
     num.iter <- num.iter + 1
     log.lik.old <- log.lik
     err.old <- err
@@ -46,7 +46,7 @@ function(x, cl=NULL, threshold=0.0001){
       z[cl==0] <- 0
     }
 
-    if(any(is.na(z))) conv <- F
+    if(any(is.na(z))) conv <- FALSE
    ## M Step
     if(all(cl==0)) pi <- sum(z) / tt
     else pi <- sum(z[cl==1]) / sum(cl)
@@ -62,7 +62,7 @@ function(x, cl=NULL, threshold=0.0001){
     #cat(log.lik, "\n")
     err <- abs(log.lik.old - log.lik)
     if(num.iter != 1) lik.rec[num.iter-1] <- log.lik
-    dec <- ifelse(log.lik.old > log.lik, T, F)
+    dec <- ifelse(log.lik.old > log.lik, TRUE, FALSE)
     if(any(pi==0 | pi==1)) err <- 0
   }
 
@@ -81,7 +81,7 @@ function(x, cl=NULL, threshold=0.0001){
   if(!conv | abnormal) {
     expr <- rep(NA,tt)
     mu <- sigmasq <- pi <- NA
-    loc <- F
+    loc <- FALSE
     lik.rec <- 0
   }
   else {
@@ -89,7 +89,6 @@ function(x, cl=NULL, threshold=0.0001){
     expr <- (z0 - min(z0)) * sgn.z0
 
   }
-  return(list(expr=expr, a=a, b=b, sigmasq=sigmasq, mu=mu, pi=pi, conv=conv, 
-dec=dec, loc=loc, lik.rec=lik.rec, abnormal=abnormal))
+  return(list(expr=expr, a=a, b=b, sigmasq=sigmasq, mu=mu, pi=pi, conv=conv, dec=dec, loc=loc, lik.rec=lik.rec, abnormal=abnormal))
 }
 

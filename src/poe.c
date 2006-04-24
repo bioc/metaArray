@@ -116,8 +116,8 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
   /**********************/
   /*** initial values ***/
   /**********************/
-  static int i, j, ct, tmpint;
-  static int nr,nc,tt,gg, accept;
+  int i, j, ct, tmpint;
+  int nr,nc,tt,gg, accept;
   double *alpha, *resid_c, *pos_res, *neg_res;
   double *sigma_g, *kappa_pos_g, *kappa_neg_g, *mu_g;
   double *pi_pos_g, *pi_neg_g;
@@ -304,7 +304,7 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
   /************************/
   /***      alpha       ***/
   /************************/
-  for(tt=0;tt<(nc-1);tt++) {
+  for(tt=0;tt<nc;tt++) {
     nnn=0.0;
 
     for(i=0;i<nr;i++) nnn += (1.0 - fabs(ee[i][tt]));
@@ -336,9 +336,8 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
       alpha[tt]=pp->alpha_t[tt];
     }
   } 
-  tmp3=0.0; 
-  for(i=0;i<(nc-1);i++) tmp3+=alpha[i];
-  alpha[nc-1]=(-1.0)*tmp3;
+  tmp3=vec_mean(alpha,nc); 
+  for(i=0;i<nc;i++) alpha[i] -= tmp3 ;
 
   /****************/
   /***     mu   ***/
@@ -422,16 +421,19 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
   /******************************/
   post_var=1.0/(nr*pp->tausqinv+1.0/pow(pr->mu_sd,2));
   post_mean=(nr*pp->tausqinv*(vec_mean(mu_g,nr))+(pr->mu_mm/pow(pr->mu_sd,2)))*post_var;
-  pp->mu=rnorm(post_mean,sqrt(post_var));
-
+  tmp=rnorm(post_mean,sqrt(post_var));
+  pp->mu = (!R_FINITE(tmp1) || ISNA(tmp1) || ISNAN(tmp1) ? pp->mu : tmp);
   post_a=pr->tausqinv_aa+((double) nr/2.0);
   tmp1=0.0;
   for(i=0;i<nr;i++) tmp1+=pow(mu_g[i]-pp->mu,2);
   post_b=pr->tausqinv_bb+0.5*tmp1;
-  pp->tausqinv=rgamma(fmax2(post_a,_POSMIN_),1.0)/post_b;
+  tmp=rgamma(fmax2(post_a,_POSMIN_),1.0)/post_b;
+  pp->tausqinv = (!R_FINITE(tmp) || ISNA(tmp) || ISNAN(tmp) ? pp->tausqinv : tmp);
+  tmp=rgamma(((double)(nr+1)),1.0/(pr->kap_pri_rate+vec_sum(kappa_pos_g,nr)));
+  pp->kap_pos_rate=(!R_FINITE(tmp) || ISNA(tmp) || ISNAN(tmp) ? pp->kap_pos_rate : tmp);
+  tmp=rgamma(((double)(nr+1)),1.0/(pr->kap_pri_rate+vec_sum(kappa_neg_g,nr)));
+  pp->kap_neg_rate=(!R_FINITE(tmp) || ISNA(tmp) || ISNAN(tmp) ? pp->kap_neg_rate : tmp);
 
-  pp->kap_pos_rate=rgamma(((double)(nr+1)),1.0/(pr->kap_pri_rate+vec_sum(kappa_pos_g,nr)));
-  pp->kap_neg_rate=rgamma(((double)(nr+1)),1.0/(pr->kap_pri_rate+vec_sum(kappa_neg_g,nr)));
   tmp1=0.0;
   tmp2=0.0;
   tmp3=0.0;
@@ -444,24 +446,31 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
   } 
   tmp1=tmp1/((double) nr);
   tmp2=tmp2/((double) nr);
+
   post_var=1.0/((double) nr*pp->pil_pos_prec+1.0/pow(pr->mu_sd,2));
   post_mean=((double) nr*pp->pil_pos_prec*tmp1)+(pr->pi_pos_mm/pow(pr->pi_pos_sd,2))*post_var;
-  pp->pil_pos_mean=rnorm(post_mean,sqrt(post_var));
+  tmp=rnorm(post_mean,sqrt(post_var));
+  pp->pil_pos_mean = (!R_FINITE(tmp) || ISNA(tmp) || ISNAN(tmp) ? pp->pil_pos_mean : tmp) ;
 
   post_a=pr->tausqinv_aa+(((double) nr) / 2.0);
   post_b=pr->tausqinv_bb+0.5*tmp3;
-  pp->pil_pos_prec=rgamma(fmax2(post_a,_POSMIN_),1.0)/post_b;
+  tmp = rgamma(fmax2(post_a,_POSMIN_),1.0)/post_b;
+  pp->pil_pos_prec = (!R_FINITE(tmp) || ISNA(tmp) || ISNAN(tmp) ? pp->pil_pos_prec : tmp);
 
   post_var=1.0/((double) nr*pp->pil_neg_prec+1.0/pow(pr->mu_sd,2));
   post_mean=((double) nr*pp->pil_neg_prec*tmp2)+(pr->pi_neg_mm/pow(pr->pi_neg_sd,2))*post_var;
-  pp->pil_neg_mean=rnorm(post_mean,sqrt(post_var));
+  tmp = rnorm(post_mean,sqrt(post_var));
+  pp->pil_neg_mean = (!R_FINITE(tmp) || ISNA(tmp) || ISNAN(tmp) ? pp->pil_neg_mean : tmp);
 
   post_a=pr->tausqinv_aa+(((double) nr) / 2.0);
   post_b=pr->tausqinv_bb+0.5*tmp4;
+  tmp = rgamma(fmax2(post_a,_POSMIN_),1.0)/post_b;
+  pp->pil_neg_prec = (!R_FINITE(tmp) || ISNA(tmp) | ISNAN(tmp) ? pp->pil_neg_prec : tmp);
+
   tmp1=0.0;
   for(i=0;i<nr;i++) tmp1+=1.0/pow(sigma_g[i],2.0);
-  pp->pil_neg_prec=rgamma(fmax2(post_a,_POSMIN_),1.0)/post_b;
-  pp->lambda=rgamma(fmax2((double) nr*pp->gamma+1.0,_POSMIN_),1.0/tmp1);
+  tmp=rgamma(fmax2((double) nr*pp->gamma+1.0,_POSMIN_),1.0/tmp1);
+  pp->lambda = (!R_FINITE(tmp) || ISNA(tmp) || ISNAN(tmp) ? pp->lambda : tmp);
   gamma_new=pp->gamma+_STEPSIZE_*sqrt(_PV_GAMMA_)*rt(_DDFF_);     
 
   log_post_new=log_posterior_gamma(gamma_new,pp->lambda,sigma_g,nr);
