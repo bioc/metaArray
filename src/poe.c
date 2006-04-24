@@ -174,15 +174,12 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
       }
     }    
     res_max=(ct==0?0:vec_max(pos_res,ct));
-    /* if(res_max > _KAP_MIN_*pp->sigma_g[gg]) {
-      kappa_a=1.0+(pp->kap_pos_rate*(res_max-_KAP_MIN_*(pp->sigma_g[gg])));
-    } */
-    if(res_max > _KAP_MIN_*pp->sigma_g[gg]) {
+    if(res_max > _KAP_MIN_*pp->sigma_g[gg]) { 
       kappa_new= res_max + rgamma(kappa_a,1.0/kappa_b);
     }
     else {
       kappa_new=_KAP_MIN_*pp->sigma_g[gg] + rgamma(kappa_a,1.0/kappa_b);
-    }
+    } 
     log_prop_old=dgamma(pp->kappa_pos_g[gg],kappa_a,1.0/kappa_b,0);
     log_prop_new=dgamma(kappa_new,kappa_a,1.0/kappa_b,0);
     log_post_new=log_posterior_kappa(kappa_new,pos_res,ct,pp->sigma_g[gg],pp->pi_pos_g[gg],pp->kap_pos_rate);
@@ -191,7 +188,7 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
     if(ISNAN(log_post_new) || ISNAN(log_post_new)) aaa=0.0;
     aaa=exp(log_post_new-log_post_old-log_prop_new+log_prop_old);
     if(ISNA(aaa)||ISNAN(aaa)||!R_FINITE(aaa)) aaa=0.0;
-    if(aaa > runif(0,1) && !ISNAN(kappa_new) && !ISNA(kappa_new) && !R_FINITE(kappa_new)) { 
+    if(aaa > runif(0,1) && !ISNAN(kappa_new) && !ISNA(kappa_new) && R_FINITE(kappa_new)) { 
       kappa_pos_g[gg]=kappa_new;
     }
     else {
@@ -218,12 +215,12 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
     /* if(res_max > _KAP_MIN_*pp->sigma_g[gg]) {
       kappa_a=1.0+(pp->kap_neg_rate*(res_max-_KAP_MIN_*pp->sigma_g[gg]));
     }  */
-    if(res_max > _KAP_MIN_*pp->sigma_g[gg]) {
+    if(res_max > _KAP_MIN_*pp->sigma_g[gg]) { 
       kappa_new= res_max + rgamma(kappa_a,1.0/kappa_b);
     }
     else {
       kappa_new=_KAP_MIN_*pp->sigma_g[gg] + rgamma(kappa_a,1.0/kappa_b);
-    }
+    } 
     log_prop_old=dgamma(pp->kappa_neg_g[gg],kappa_a,1.0/kappa_b,0);
     log_prop_new=dgamma(kappa_new,kappa_a,1.0/kappa_b,0);
     log_post_new=log_posterior_kappa(kappa_new,neg_res,ct,pp->sigma_g[gg],pp->pi_neg_g[gg], pp->kap_neg_rate);
@@ -232,7 +229,7 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
     if(ISNAN(log_post_new) || ISNAN(log_post_new)) aaa = 0.0;
     aaa=exp(log_post_new-log_post_old-log_prop_new+log_prop_old);
     if(ISNA(aaa)||ISNAN(aaa)||!R_FINITE(aaa)) aaa=0.0;
-    if(aaa>runif(0,1) && !ISNA(kappa_new) && !ISNAN(kappa_new) && !R_FINITE(kappa_new)) {
+    if(aaa>runif(0,1) && !ISNA(kappa_new) && !ISNAN(kappa_new) && R_FINITE(kappa_new)) {
        kappa_neg_g[gg]=kappa_new;
     }
     else {
@@ -273,7 +270,7 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
       if(dplus[i][j]+d0[i][j] == 0.0) pp->phat_pos[i][j]=0.0;
       else if(dplus[i][j]/(dplus[i][j]+d0[i][j]) > 1.0) pp->phat_pos[i][j]=1.0;
       else if(dplus[i][j]/(dplus[i][j]+d0[i][j]) < 0.0) pp->phat_pos[i][j]=0.0;
-      else pp->phat_pos[i][j]=dplus[i][j]/(dplus[i][j]+d0[i][j]);
+      else pp->phat_pos[i][j]=fmin2(dplus[i][j]/(dplus[i][j]+d0[i][j]),1);
  
       /* Negative */
       if(dminus[i][j]+d0[i][j] == 0.0) pp->phat_neg[i][j]=0.0;
@@ -282,7 +279,9 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
       else pp->phat_neg[i][j]=dminus[i][j]/(dminus[i][j]+d0[i][j]); 
      
       /* ee */
-      ee[i][j]=(1.0-rbinom(1,1.0-fmin2(pp->phat_pos[i][j]+pp->phat_neg[i][j],1))*sign(resid[i][j]));
+      ee[i][j]=rbinom(1,pp->phat_pos[i][j]+pp->phat_neg[i][j]);
+      if(resid[i][j] < 0 && (ee[i][j] != 0)) ee[i][j] = (-1.0) * ee[i][j] ;
+      /* Rprintf("%f ", ee[i][j]); */
     }
   }
   for(j=0;j<nc;j++) {
@@ -292,6 +291,13 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
       }  	  
     }
   }
+  /* 
+  for(i=0;j<nc;j++) {
+    for(tt = 0; tt<nr; tt++) {
+      if(ee[i][j]==-1.0 || ee[i][j]==0.0 || ee[i][j] == 1.0) Rprintf("1\n");
+    }
+  }
+  */
 
   /************************/
   /***  alpha and mu    ***/
@@ -299,10 +305,9 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
   /***      alpha       ***/
   /************************/
   for(tt=0;tt<(nc-1);tt++) {
-    tmp1=0.0;
-    for(i=0;i<nr;i++) tmp1 += (ee[i][tt]*sign(ee[i][tt]));
-    nnn=((double) nr)-tmp1;
+    nnn=0.0;
 
+    for(i=0;i<nr;i++) nnn += (1.0 - fabs(ee[i][tt]));
     if((!ISNA(nnn)) && (!ISNAN(nnn)) && (R_FINITE(nnn)) && (nnn > 0.0)) {
       ct=0;
       for(i=0;i<nr;i++) ct+=((int) (ee[i][tt]==0.0));
@@ -339,9 +344,9 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
   /***     mu   ***/
   /****************/
   for(gg=0;gg<nr;gg++) {
-    tmp1=0.0;
-    for(j=0;j<nc;j++) tmp1+=(ee[gg][j])*sign(ee[gg][j]);
-    nnn=((double) nc)-tmp1; 
+    nnn=0.0;
+    for(j=0;j<nc;j++) nnn+=(1.0 - fabs(ee[gg][j]));
+
     if(!ISNA(nnn) && !ISNAN(nnn) && R_FINITE(nnn) && (nnn>0.0)) {
       ct=0;
       for(j=0;j<nc;j++) ct+=((int) (ee[gg][j]==0.0));
@@ -382,19 +387,20 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
     tmp=runif(tmp1,1);
     tmpq=qgamma(tmp,post_a,1.0/post_b,1,0);
     sigma_g[gg]= ((R_FINITE(tmpq) && (!ISNA(tmpq)) && (!ISNAN(tmpq))) ? sqrt(1.0/tmpq) : pp->sigma_g[gg]); 
-
-    /* Rprintf("%f\n", sigma_g[gg]); */
+    
     /* if(ISNA(sigma_g[gg]) || ISNAN(sigma_g[gg])) 
        print error to stderr */
 
     succpos=0.0;
     succneg=0.0;
     for(j=0;j<nc;j++) {
-      succpos += ((double) (ee[gg][j] > 0.0));
-      succneg += ((double) (ee[gg][j] < 0.0));
+      succpos +=  (ee[gg][j] > 0.0);
+      succneg +=  (ee[gg][j] < 0.0);
     }
+
     pi_pos_g[gg]=rbeta(succpos+1.0, ((double) nc)-succpos+1.0);
     pi_neg_g[gg]=rbeta(succneg+1.0, ((double) nc)-succneg+1.0);
+
     tmp1=dnorm4(logit(pi_pos_g[gg]),pp->pil_pos_mean,sqrt(pp->pil_pos_prec),0);
     tmp2=dnorm4(logit(pp->pi_pos_g[gg]),pp->pil_pos_mean,sqrt(pp->pil_pos_prec),0);
     aaa=tmp1/tmp2;
@@ -417,11 +423,13 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
   post_var=1.0/(nr*pp->tausqinv+1.0/pow(pr->mu_sd,2));
   post_mean=(nr*pp->tausqinv*(vec_mean(mu_g,nr))+(pr->mu_mm/pow(pr->mu_sd,2)))*post_var;
   pp->mu=rnorm(post_mean,sqrt(post_var));
+
   post_a=pr->tausqinv_aa+((double) nr/2.0);
   tmp1=0.0;
   for(i=0;i<nr;i++) tmp1+=pow(mu_g[i]-pp->mu,2);
   post_b=pr->tausqinv_bb+0.5*tmp1;
   pp->tausqinv=rgamma(fmax2(post_a,_POSMIN_),1.0)/post_b;
+
   pp->kap_pos_rate=rgamma(((double)(nr+1)),1.0/(pr->kap_pri_rate+vec_sum(kappa_pos_g,nr)));
   pp->kap_neg_rate=rgamma(((double)(nr+1)),1.0/(pr->kap_pri_rate+vec_sum(kappa_neg_g,nr)));
   tmp1=0.0;
@@ -439,22 +447,28 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
   post_var=1.0/((double) nr*pp->pil_pos_prec+1.0/pow(pr->mu_sd,2));
   post_mean=((double) nr*pp->pil_pos_prec*tmp1)+(pr->pi_pos_mm/pow(pr->pi_pos_sd,2))*post_var;
   pp->pil_pos_mean=rnorm(post_mean,sqrt(post_var));
-  post_a=pr->tausqinv_aa+((double) nr / 2.0);
+
+  post_a=pr->tausqinv_aa+(((double) nr) / 2.0);
   post_b=pr->tausqinv_bb+0.5*tmp3;
   pp->pil_pos_prec=rgamma(fmax2(post_a,_POSMIN_),1.0)/post_b;
+
   post_var=1.0/((double) nr*pp->pil_neg_prec+1.0/pow(pr->mu_sd,2));
   post_mean=((double) nr*pp->pil_neg_prec*tmp2)+(pr->pi_neg_mm/pow(pr->pi_neg_sd,2))*post_var;
   pp->pil_neg_mean=rnorm(post_mean,sqrt(post_var));
-  post_a=pr->tausqinv_aa+((double) nr/2);
+
+  post_a=pr->tausqinv_aa+(((double) nr) / 2.0);
   post_b=pr->tausqinv_bb+0.5*tmp4;
   tmp1=0.0;
-  for(i=0;i<nr;i++) tmp1+=1.0/pow(sigma_g[i],2);
+  for(i=0;i<nr;i++) tmp1+=1.0/pow(sigma_g[i],2.0);
   pp->pil_neg_prec=rgamma(fmax2(post_a,_POSMIN_),1.0)/post_b;
   pp->lambda=rgamma(fmax2((double) nr*pp->gamma+1.0,_POSMIN_),1.0/tmp1);
   gamma_new=pp->gamma+_STEPSIZE_*sqrt(_PV_GAMMA_)*rt(_DDFF_);     
+
   log_post_new=log_posterior_gamma(gamma_new,pp->lambda,sigma_g,nr);
   log_post_old=log_posterior_gamma(pp->gamma,pp->lambda,sigma_g,nr);
+
   aaa=exp(log_post_new-log_post_old);
+
   if(ISNAN(log_post_old) || ISNAN(log_post_old) || !R_FINITE(log_post_old)) aaa=0.0;
   if(ISNAN(log_post_new) || ISNAN(log_post_new) || !R_FINITE(log_post_new)) aaa=0.0;
   if(ISNAN(aaa) || ISNA(aaa) || !R_FINITE(aaa)) aaa=0.0;
@@ -482,11 +496,10 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
       pp->poe_mat[i][j]=pp->phat_pos[i][j]-pp->phat_neg[i][j];
       /* if(ISNAN(pp->poe_mat[i][j]) || ISNA(pp->poe_mat[i][j]) || !R_FINITE(pp->poe_mat[i][j])) Rprintf("NA in POE\n"); */
       /*  Rprintf("%f\t", pp->poe_mat[i][j]); */
-      /*     pp->phat_pos[i][j]=phat_pos[i][j];  */
-      /*     pp->phat_neg[i][j]=phat_neg[i][j];  */
+      /* pp->phat_pos[i][j]=phat_pos[i][j];  
+	 pp->phat_neg[i][j]=phat_neg[i][j];  */
     }
   } 
-  /* Rprintf("%f\t", pp->poe_mat[1][1]); */
 
   /**************************/
   /*** Garbage collection ***/
