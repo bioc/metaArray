@@ -8,8 +8,8 @@ function(mat, cl=NULL, threshold=0.00001, every=100) {
   cat("Number of Genes:", nr, "\n")
   cat("This model assumes that the samples are centered and scaled.\n")
   new.mat <- matrix(0,nr,nc)
-  conv <- dec <- loc <- abnormal <- rep(F,nr)
-  med.expr <- apply(mat,1,median,na.rm=T)
+  conv <- dec <- loc <- abnormal <- rep(FALSE,nr)
+  med.expr <- apply(mat,1,median,na.rm=TRUE)
   new.mat <- sweep(mat,1,med.expr)
   for(i in 1:nr) {
     if(sum(is.na(as.numeric(mat[i,]))) > .25 * nc ) stop("More than 25% missing values for gene", i, "\n")
