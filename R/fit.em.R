@@ -66,15 +66,8 @@ function(x, cl=NULL, threshold=0.0001){
     if(any(pi==0 | pi==1)) err <- 0
   }
 
-  if(all(cl==0)) {
-    est.u.p <- pi * dunif(x,a,b) 
-    est.n.p <- (1-pi) * dnorm(x,mu,sqrt(sigmasq))
-  }
-  else {
-    pi2 <- pi * sum(cl) / tt
-    est.u.p <- pi2 * dunif(x,a,b)
-    est.n.p <- (1 - pi2) * dnorm(x,mu,sqrt(sigmasq))
-  }
+  est.u.p <- pi * dunif(x,a,b) 
+  est.n.p <- (1-pi) * dnorm(x,mu,sqrt(sigmasq))
   z0 <- est.u.p / (est.n.p + est.u.p)
   sgn.z0 <- ifelse(x < mu, -1, 1) 
   loc <- (max(lik.rec) != lik.rec[length(lik.rec)])

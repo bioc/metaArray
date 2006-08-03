@@ -121,7 +121,7 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
   double *alpha, *resid_c, *pos_res, *neg_res;
   double *sigma_g, *kappa_pos_g, *kappa_neg_g, *mu_g;
   double *pi_pos_g, *pi_neg_g;
-  double kappa_b, kappa_a, kappa_new, aaa, res_max;         
+  double kappa_b, kappa_a, kappa_new, aaa, res_max, shift;         
   double log_prop_old, log_prop_new, log_post_new, log_post_old;
   double **d0, **resid, **dplus, **dminus, **ee;
   /* double **phat_pos, **phat_neg; */
@@ -175,11 +175,17 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
     }    
     res_max=(ct==0?0:vec_max(pos_res,ct));
     if(res_max > _KAP_MIN_*pp->sigma_g[gg]) { 
-      kappa_new= res_max + rgamma(kappa_a,1.0/kappa_b);
+      /* kappa_new= res_max + rgamma(kappa_a,1.0/kappa_b); */
+      kappa_a = 1 + pp->kap_pos_rate * (res_max - _KAP_MIN_ * pp->sigma_g[gg]);
     }
+
+    /* 
     else {
       kappa_new=_KAP_MIN_*pp->sigma_g[gg] + rgamma(kappa_a,1.0/kappa_b);
-    } 
+      } */
+
+    shift = fmax2(res_max, _KAP_MIN_ * pp->sigma_g[gg]);
+    kappa_new = shift + rgamma(kappa_a, 1.0/kappa_b);
     log_prop_old=dgamma(pp->kappa_pos_g[gg],kappa_a,1.0/kappa_b,0);
     log_prop_new=dgamma(kappa_new,kappa_a,1.0/kappa_b,0);
     log_post_new=log_posterior_kappa(kappa_new,pos_res,ct,pp->sigma_g[gg],pp->pi_pos_g[gg],pp->kap_pos_rate);
@@ -216,11 +222,14 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
       kappa_a=1.0+(pp->kap_neg_rate*(res_max-_KAP_MIN_*pp->sigma_g[gg]));
     }  */
     if(res_max > _KAP_MIN_*pp->sigma_g[gg]) { 
-      kappa_new= res_max + rgamma(kappa_a,1.0/kappa_b);
+      /* kappa_new= res_max + rgamma(kappa_a,1.0/kappa_b); */
+      kappa_a = 1 + pp->kap_neg_rate * (res_max - _KAP_MIN_ * pp->sigma_g[gg]);
     }
-    else {
+    /*    else {
       kappa_new=_KAP_MIN_*pp->sigma_g[gg] + rgamma(kappa_a,1.0/kappa_b);
-    } 
+      } */
+    shift = fmax2(res_max, _KAP_MIN_ * pp->sigma_g[gg]);
+    kappa_new = shift + rgamma(kappa_a, 1.0/kappa_b);
     log_prop_old=dgamma(pp->kappa_neg_g[gg],kappa_a,1.0/kappa_b,0);
     log_prop_new=dgamma(kappa_new,kappa_a,1.0/kappa_b,0);
     log_post_new=log_posterior_kappa(kappa_new,neg_res,ct,pp->sigma_g[gg],pp->pi_neg_g[gg], pp->kap_neg_rate);
