@@ -20,12 +20,12 @@ function(x, cl=NULL, threshold=0.0001){
   if(all(cl==0)) z[id == 1] <- 1
   else z <- cl/2
 
-  a <- min(x,na.rm=TRUE); b <- max(x,na.rm=TRUE)
+  a <- min(x,na.rm=TRUE)-1e-14; b <- max(x,na.rm=TRUE)+1e-14
   #a <- a - (b-a)*.001; b <- b + (b-a)*.001  
   err <- err.old <- 1
 
   if(all(cl==0)) pi <- sum(z) / tt
-  else pi <- sum(z[cl==1]) / sum(cl)
+  else pi <- sum(z[cl==1]) / tt #sum(cl)
 
   mu <- sum((1-z)*x) / sum(1-z)
   sigmasq <- sum((1-z)*(x-mu)^2) / sum(1-z)
@@ -49,7 +49,7 @@ function(x, cl=NULL, threshold=0.0001){
     if(any(is.na(z))) conv <- FALSE
    ## M Step
     if(all(cl==0)) pi <- sum(z) / tt
-    else pi <- sum(z[cl==1]) / sum(cl)
+    else pi <- sum(z[cl==1]) / tt #sum(cl)
     mu <- sum((1-z)*x) / sum(1-z)
     sigmasq <- sum((1-z)*((x-mu)^2)) / sum(1-z)
 
