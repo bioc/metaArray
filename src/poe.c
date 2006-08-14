@@ -176,7 +176,7 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
     res_max=(ct==0?0:vec_max(pos_res,ct));
     if(res_max > _KAP_MIN_*pp->sigma_g[gg]) { 
       /* kappa_new= res_max + rgamma(kappa_a,1.0/kappa_b); */
-      kappa_a = 1 + pp->kap_pos_rate * (res_max - _KAP_MIN_ * pp->sigma_g[gg]);
+      kappa_a = 1.0 + pp->kap_pos_rate * (res_max - _KAP_MIN_ * pp->sigma_g[gg]);
     }
 
     /* 
@@ -223,7 +223,7 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
     }  */
     if(res_max > _KAP_MIN_*pp->sigma_g[gg]) { 
       /* kappa_new= res_max + rgamma(kappa_a,1.0/kappa_b); */
-      kappa_a = 1 + pp->kap_neg_rate * (res_max - _KAP_MIN_ * pp->sigma_g[gg]);
+      kappa_a = 1.0 + pp->kap_neg_rate * (res_max - _KAP_MIN_ * pp->sigma_g[gg]);
     }
     /*    else {
       kappa_new=_KAP_MIN_*pp->sigma_g[gg] + rgamma(kappa_a,1.0/kappa_b);
