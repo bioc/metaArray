@@ -25,9 +25,9 @@ function(mat, cl=NULL, threshold=0.00001, every=100) {
   len.id <- length(checkid)
   rownames(new.mat) <- rownames(mat)
   colnames(new.mat) <- colnames(mat)
-  cat("The algorithm has shown evidences of\n")
-  cat("local maxima for", sum(loc), "genes\n")
-  cat("decreasing log-likelihood", sum(dec), "genes\n")
+  #cat("The algorithm has shown evidences of\n")
+  #cat("local maxima for", sum(loc), "genes\n")
+  #cat("decreasing log-likelihood", sum(dec), "genes\n")
   if(len.id!=0) {
     cat("EM failed to find starting points for:\n")
     for(i in 1:len.id) cat(checkid[i], rownames(mat)[i], "\n")
