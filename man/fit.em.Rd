@@ -6,7 +6,7 @@
   distribution, and extracts probability of over/under expression for all samples in all genes.  
 }
 \usage{
-  fit.em(x, cl = NULL, threshold=1e-04)
+  fit.em(x, cl = NULL, threshold=1e-10)
 }
 \arguments{
   \item{x}{A numeric vector, especially expression values for a particular gene. }

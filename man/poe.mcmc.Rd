@@ -14,7 +14,7 @@
   poe.mcmc(AA, NN = NULL, id = NULL, M = 2000, kap.min=3.0,
       logdata=FALSE, stepsize=0.5, 
       centersample = TRUE, centergene = TRUE, generatestarts = TRUE, start.method = 1,
-      startobject = R0, collapse.to.two = TRUE, burnin=200,
+      startobject = R0, collapse.to.two = FALSE, burnin=200,
       collapse.window=50, converge.threshold=0.01,
       PR = list(alpha.mm = 0, alpha.sd = 100, mu.mm = 0, mu.sd = 100,
           pipos.mm = 0, pipos.sd = 100, pineg.mm = 0, pineg.sd = 100,
