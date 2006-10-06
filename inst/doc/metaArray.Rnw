@@ -95,7 +95,7 @@ Meanwhile, the \texttt{poe.em} is a new function. This function is faster than \
 Another feature of the method using EM algorithm is that one can graphically inspect the fit for individual genes. See Figure 1 for an example. The upper left panel shows the fitted POE values plotted against the raw expression. The upper right panel shows the fitted mixture distribution for that gene. The lower left panel is the histogram of raw expression, and finally the lower right panel shows the trajectory of likelihood during the course of estimation. 
 \begin{center}
 <<fig=TRUE>>=
-em.draw(as.numeric(chen[1,]), cl=chen.spl$metastasis)
+em.draw(as.numeric(chen[1,]))
 @ 
 \end{center}
 The computation burden is much lighter for EM algorithm than MCMC. Run time is consequently shorter. Only a few minutes or less is required for very large datasets, for instance, ten thousand genes and one hundred samples. 

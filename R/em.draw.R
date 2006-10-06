@@ -2,7 +2,7 @@
 function(vec, cl=NULL, threshold=0.0001) {
   par(mfrow=c(2,2))
   raw <- as.numeric(vec) 
-  if(is.null(cl)) cl <- rep(1,length(vec))
+  if(is.null(cl)) cl <- rep(0,length(vec))
   fit.tmp <- fit.em(raw, cl, threshold)
   trans <- fit.tmp$expr
   lik <- fit.tmp$lik.rec
