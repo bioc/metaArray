@@ -3,7 +3,7 @@ function(mat, cl=NULL, threshold=0.00001, every=100) {
   mat <- as.matrix(mat)
   nc <- ncol(mat)
   nr <- nrow(mat)
-  if(is.null(cl)) cl <- rep(1,dim(mat)[2])
+  if(is.null(cl)) cl <- rep(0,dim(mat)[2])
   cat("Number of Samples:", nc, "\n")
   cat("Number of Genes:", nr, "\n")
   cat("This model assumes that the samples are centered and scaled.\n")
