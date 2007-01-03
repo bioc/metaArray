@@ -74,8 +74,8 @@ double xlogy(const double x, const double y)
 
 double log_posterior_gamma(const double a, const double b, const double *sigma_g, const int len)
 {
-  static double lp=0.0;
-  static int i;
+  double lp=0.0;
+  int i;
   if(a < 0.0) return _NA_VAL_;
   else {
     for(i=0;i<len;i++) {
@@ -87,8 +87,9 @@ double log_posterior_gamma(const double a, const double b, const double *sigma_g
 
 double log_posterior_kappa(const double kappa, const double *xxx, const int len, const double sigma_g, const double pi_g, const double kr)
 {
-  static int i;
-  double lp, lik, sum=0.0;
+  int i;
+  double lp, lik, sum; 
+  sum=0.0;
   lik=1.0;
   if(len==0) {
     lp=log(kr)-kr*kappa;
@@ -98,7 +99,7 @@ double log_posterior_kappa(const double kappa, const double *xxx, const int len,
   for(i=0;i<len;i++) sum+=((int) (xxx[i]<=kappa));
   if(sum==len) {
     for(i=0;i<len;i++) {
-      lik*=pi_g*.5*(1.0/kappa)+(1-pi_g)*dnorm4(xxx[i],0,sigma_g,0);
+      lik*= (pi_g*.5*(1.0/kappa)+(1-pi_g)*dnorm4(xxx[i],0.0, sigma_g,0));
     }
   }
   else {
@@ -106,16 +107,16 @@ double log_posterior_kappa(const double kappa, const double *xxx, const int len,
     for(i=0;i<len;i++) sum+=((int) (xxx[i]>kappa));
     if(sum==len) {
       for(i=0;i<len;i++) {
-        lik*=(1-pi_g)*dnorm4(xxx[i],0,sigma_g,0);
+        lik *= (1-pi_g)*dnorm4(xxx[i], 0.0, sigma_g,0);
       }
     }
     else {
       for(i=0;i<len;i++) {
         if(xxx[i]<=kappa) {
-          lik*=pi_g*.5*(1.0/kappa)+(1-pi_g)*dnorm4(xxx[i],0,sigma_g,0);   
+          lik *= (pi_g*.5*(1.0/kappa)+(1-pi_g)*dnorm4(xxx[i],0.0, sigma_g,0));   
 	}
         else{
-          lik*=(1-pi_g)*dnorm4(xxx[i],0,sigma_g,0);
+          lik *= (1-pi_g)*dnorm4(xxx[i],0.0, sigma_g, 0);
         }
       }
     }
@@ -126,10 +127,10 @@ double log_posterior_kappa(const double kappa, const double *xxx, const int len,
 
 void calcor(const double *x, const double *y, const int len, double *num)
 {
-  static int i;
-  static double correl, mx, my;
-  static double qx, qy, xy;
-  static double t0, t1, t2;
+  int i;
+  double correl, mx, my;
+  double qx, qy, xy;
+  double t0, t1, t2;
   correl=0.0;
   t0=0.0;
   t1=0.0;

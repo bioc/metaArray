@@ -155,7 +155,7 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
   /**********************/
   for(gg=0;gg<nr;gg++) 
   {
-    for(j=0;j<nc;j++) resid_c[j]=(expr->d[gg][j])-(pp->alpha_t[j])-(pp->mu_g[gg]);
+    for(j=0;j<nc;j++) resid_c[j] = (expr->d[gg][j])-(pp->alpha_t[j])-(pp->mu_g[gg]);
     /*********************/
     /*** Positive Side ***/
     /*********************/
@@ -174,16 +174,10 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
       }
     }    
     res_max=(ct==0?0:vec_max(pos_res,ct));
-    if(res_max > _KAP_MIN_*pp->sigma_g[gg]) { 
+    if(res_max > _KAP_MIN_ * pp->sigma_g[gg]) { 
       /* kappa_new= res_max + rgamma(kappa_a,1.0/kappa_b); */
       kappa_a = 1.0 + pp->kap_pos_rate * (res_max - _KAP_MIN_ * pp->sigma_g[gg]);
     }
-
-    /* 
-    else {
-      kappa_new=_KAP_MIN_*pp->sigma_g[gg] + rgamma(kappa_a,1.0/kappa_b);
-      } */
-
     shift = fmax2(res_max, _KAP_MIN_ * pp->sigma_g[gg]);
     kappa_new = shift + rgamma(kappa_a, 1.0/kappa_b);
     log_prop_old=dgamma(pp->kappa_pos_g[gg],kappa_a,1.0/kappa_b,0);
@@ -208,26 +202,19 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
     kappa_b=pp->kap_neg_rate;
     kappa_a=1.0;
     ct=0;
-    for(i=0;i<nc;i++) if(resid_c[i]<0) ct++;
+    for(j=0;j<nc;j++) if(resid_c[j]<0) ct++;
     assert(neg_res=(double *) Calloc(ct,double));
     ct=0;
-    for(i=0;i<nc;i++) {
-      if(resid_c[i]<0) {
-        neg_res[ct]=abs(resid_c[i]);
+    for(j=0;j<nc;j++) {
+      if(resid_c[j]<0) {
+        neg_res[ct]=abs(resid_c[j]);
         ct++;
       }
     }    
     res_max=(ct==0?0:vec_max(neg_res,ct));
-    /* if(res_max > _KAP_MIN_*pp->sigma_g[gg]) {
-      kappa_a=1.0+(pp->kap_neg_rate*(res_max-_KAP_MIN_*pp->sigma_g[gg]));
-    }  */
     if(res_max > _KAP_MIN_*pp->sigma_g[gg]) { 
-      /* kappa_new= res_max + rgamma(kappa_a,1.0/kappa_b); */
       kappa_a = 1.0 + pp->kap_neg_rate * (res_max - _KAP_MIN_ * pp->sigma_g[gg]);
     }
-    /*    else {
-      kappa_new=_KAP_MIN_*pp->sigma_g[gg] + rgamma(kappa_a,1.0/kappa_b);
-      } */
     shift = fmax2(res_max, _KAP_MIN_ * pp->sigma_g[gg]);
     kappa_new = shift + rgamma(kappa_a, 1.0/kappa_b);
     log_prop_old=dgamma(pp->kappa_neg_g[gg],kappa_a,1.0/kappa_b,0);
@@ -300,13 +287,6 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
       }  	  
     }
   }
-  /* 
-  for(i=0;j<nc;j++) {
-    for(tt = 0; tt<nr; tt++) {
-      if(ee[i][j]==-1.0 || ee[i][j]==0.0 || ee[i][j] == 1.0) Rprintf("1\n");
-    }
-  }
-  */
 
   /************************/
   /***  alpha and mu    ***/
