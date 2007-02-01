@@ -293,7 +293,7 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
   /************************/
   /***      alpha       ***/
   /************************/
-  for(tt=0;tt<nc;tt++) {
+  for(tt=0;tt<(nc-1);tt++) {
     nnn=0.0;
 
     for(i=0;i<nr;i++) nnn += (1.0 - fabs(ee[i][tt]));
@@ -316,8 +316,8 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
       post_var = 1.0/(tmp1+(1.0/pow(pr->alpha_sd,2)));
       post_mean = (nnn*tmp2 + pr->alpha_mm/pow(pr->alpha_sd,2)) * post_var;
       tmp1 = rnorm(post_mean,sqrt(post_var));
-
-      alpha[tt] = ((!R_FINITE(tmp1)) || (ISNA(tmp1)) || (ISNAN(tmp1)) ? pp->alpha_t[tt] : tmp1); 
+      alpha[tt] = tmp1;
+      /* ((!R_FINITE(tmp1)) || (ISNA(tmp1)) || (ISNAN(tmp1)) ? pp->alpha_t[tt] : tmp1); */
       Free(sss);
       Free(mmm);
     }
@@ -325,8 +325,8 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
       alpha[tt]=pp->alpha_t[tt];
     }
   } 
-  tmp3=vec_mean(alpha,nc); 
-  for(i=0;i<nc;i++) alpha[i] -= tmp3 ;
+  alpha[nc-1] = 0.0;
+  for(i=0;i<(nc-1);i++) alpha[nc-1] -= alpha[i]; 
 
   /****************/
   /***     mu   ***/
