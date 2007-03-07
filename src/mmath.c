@@ -18,16 +18,16 @@
 #define logit(p) log(p)-log(1-p)
 
 double vec_sum(const double *vec, int len) {
-  static int i;
-  static double res;
+  int i;
+  double res;
   res=vec[0];
   for(i=1;i<len;i++) res+=vec[i];
   return res;
 }
 
 double vec_max(const double *vec, int len) {
-  static int i;
-  static double res;
+  int i;
+  double res;
   res=vec[0];
   for(i=1;i<len;i++) {
     if(res<vec[i]) res=vec[i];
@@ -36,8 +36,8 @@ double vec_max(const double *vec, int len) {
 }
 
 double vec_min(const double *vec, int len) {
-  static int i;
-  static double res;
+  int i;
+  double res;
   res=vec[0];
   for(i=1;i<len;i++) {
     if(res>vec[i]) res=vec[i];
@@ -46,17 +46,17 @@ double vec_min(const double *vec, int len) {
 }
 
 double vec_mean(const double *vec, int len) {
-  static double tmp=0.0;
-  static int i;
+  double tmp=0.0;
+  int i;
   for(i=0;i<len;i++) tmp+=vec[i];
   tmp=tmp/((double) len);
   return tmp;
 }
 
 double vec_var(const double *vec, int len) {
-  static double mean=0.0;
-  static double var=0.0;
-  static int i;
+  double mean=0.0;
+  double var=0.0;
+  int i;
   for(i=0;i<len;i++) mean+=vec[i];
   mean=mean/((double) len);
   for(i=0;i<len;i++) var+=pow((vec[i]-mean),2);
@@ -68,15 +68,15 @@ double vec_var(const double *vec, int len) {
 double xlogy(const double x, const double y) 
 {
   double y2;
-  y2=(((y<=0.0) & (y > -0.001)) ? 1e-8 : y);
-  return x*log(y2);
+  /* y2=(((y<=0.0) & (y > -0.001)) ? 1e- : y);*/
+  return x*log(y);
 }
 
 double log_posterior_gamma(const double a, const double b, const double *sigma_g, const int len)
 {
   double lp=0.0;
   int i;
-  if(a < 0.0) return _NA_VAL_;
+  if(a < 0.0) return 0.0;
   else {
     for(i=0;i<len;i++) {
       lp+=-lgammafn(a)+a*log(b)+(a-1)*log(1.0/pow(sigma_g[i],2.0));
@@ -87,41 +87,41 @@ double log_posterior_gamma(const double a, const double b, const double *sigma_g
 
 double log_posterior_kappa(const double kappa, const double *xxx, const int len, const double sigma_g, const double pi_g, const double kr)
 {
-  int i;
-  double lp, lik, sum; 
-  sum=0.0;
-  lik=1.0;
+  int i, sum;
+  double lp, lik; 
+  sum=0;
+  lik=0.0;
   if(len==0) {
     lp=log(kr)-kr*kappa;
     return lp;
   }
-  if(kappa<0) return _NA_VAL_;
-  for(i=0;i<len;i++) sum+=((int) (xxx[i]<=kappa));
+  if(kappa<0) return 0.0;
+  for(i=0;i<len;i++) sum+=(((int) (xxx[i]<=kappa)));
   if(sum==len) {
     for(i=0;i<len;i++) {
-      lik*= (pi_g*.5*(1.0/kappa)+(1-pi_g)*dnorm4(xxx[i],0.0, sigma_g,0));
+      lik += log(pi_g * .5 *(1.0/kappa)+(1-pi_g)*dnorm4(xxx[i],0.0, sigma_g,0));
     }
   }
   else {
-    sum=0.0;
+    sum=0;
     for(i=0;i<len;i++) sum+=((int) (xxx[i]>kappa));
     if(sum==len) {
       for(i=0;i<len;i++) {
-        lik *= (1-pi_g)*dnorm4(xxx[i], 0.0, sigma_g,0);
+        lik += log(1-pi_g) + log(dnorm4(xxx[i], 0.0, sigma_g,0));
       }
     }
     else {
       for(i=0;i<len;i++) {
         if(xxx[i]<=kappa) {
-          lik *= (pi_g*.5*(1.0/kappa)+(1-pi_g)*dnorm4(xxx[i],0.0, sigma_g,0));   
+          lik += log((pi_g*.5*(1.0/kappa)+(1-pi_g)*dnorm4(xxx[i],0.0, sigma_g,0)));   
 	}
         else{
-          lik *= (1-pi_g)*dnorm4(xxx[i],0.0, sigma_g, 0);
+          lik += log(1-pi_g) + log(dnorm4(xxx[i],0.0, sigma_g, 0));
         }
       }
     }
   }
-  lp=log(lik)+log(kr)-kr*kappa;
+  lp=lik+kr-kr*kappa;
   return lp;
 }
 

@@ -20,7 +20,7 @@ void win_print(FILE *, char *,...);
 #define _STEPSIZE_ 0.5
 #define _SKIP_ 4
 #define _BURN_IN_ 500
-#define _KAP_MIN_ 3.0
+#define _KAP_MIN_ 2.0
 #define _DDFF_ 10.0
 #define _PV_GAMMA_ 1.0
 #define _POSMIN_ 1e-2

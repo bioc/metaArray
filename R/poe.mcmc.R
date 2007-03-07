@@ -1,13 +1,15 @@
+
 "poe.mcmc" <-
 function (AA, NN = NULL, id = NULL, M = 2000, kap.min=3.0,
     logdata=FALSE,     stepsize = 0.5, 
-    centersample = TRUE, centergene = TRUE, generatestarts = TRUE, start.method = 1, 
+    centersample = FALSE, centergene = FALSE, generatestarts = TRUE, start.method = 1, 
     startobject = R0, collapse.to.two = FALSE, burnin = 200,
     collapse.window=50,converge.threshold=0.01,
     PR = list(alpha.mm = 0, alpha.sd = 100, mu.mm = 0, mu.sd = 100, 
         pipos.mm = 0, pipos.sd = 100, pineg.mm = 0, pineg.sd = 100, 
         kap.pri.rate = 1, tausqinv.aa = 1, tausqinv.bb = 0.1)) 
 {
+
     TT <- ncol(AA)
     GG <- nrow(AA)
     tmp.poemat <- matrix(0,GG,TT)
@@ -248,6 +250,30 @@ function (AA, NN = NULL, id = NULL, M = 2000, kap.min=3.0,
   colnames(poe) <- colnames(AA)
   accept <- res[GG*(3*TT+6)+TT+11]
   gc();
+  foo <- function(org, fit, inter = 0.01) {
+    ord <- order(org)
+    org.t <- org[ord]
+    fit.t <- fit[ord]
+    l <- length(org)
+    min.fit <- min(fit.t)
+    i <- 1
+    while(fit.t[i]-min.fit > inter) {
+      fit.t[i] <- min.fit
+      i <- i+1
+    }
+    i <- length(org)
+    max.fit <- max(fit.t)
+    while(max.fit - fit.t[i] > inter) { 
+      fit.t[i] <- max.fit
+      i <- i-1
+    }
+    fit2 <- fit
+    fit2[ord] <- fit.t
+    fit2
+  }
+  for(i in 1:GG) {
+    poe[i,] <- foo(as.numeric(AA[i,]), as.numeric(poe[i,]))
+  }
   return(list(alpha = alpha, mug = mug, kappaposg = kappaposg, 
         kappanegg = kappanegg, sigmag = sigmag, piposg = piposg, 
         pinegg = pinegg, mu = mu, tausqinv = tausqinv, gamma = gamma, 

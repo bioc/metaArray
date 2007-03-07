@@ -197,27 +197,27 @@ void init_PP(PP *pp, int *nrow, int *ncol)
   for(i=0;i<nc;i++) pp->alpha_t[i]=0.0;
   for(i=0;i<nr;i++) {
     pp->mu_g[i]=0.0;
-    pp->kappa_pos_g[i]=0.0;
-    pp->kappa_neg_g[i]=0.0;
+    pp->kappa_pos_g[i]=2.0;
+    pp->kappa_neg_g[i]=2.0;
     pp->sigma_g[i]=0.0;
-    pp->pi_pos_g[i]=0.0;
-    pp->pi_neg_g[i]=0.0;
+    pp->pi_pos_g[i]=0.2;
+    pp->pi_neg_g[i]=0.2;
   }
   pp->mu=0.0;
-  pp->tausqinv=0.0;
-  pp->gamma=0.0;
-  pp->lambda=0.0;
+  pp->tausqinv=1.0;
+  pp->gamma=1.0;
+  pp->lambda=1.0;
   pp->pil_pos_mean=0.0;
   pp->pil_neg_mean=0.0;
   pp->pil_pos_prec=0.0;
   pp->pil_neg_prec=0.0;
-  pp->kap_pos_rate=0.0;
-  pp->kap_neg_rate=0.0;
+  pp->kap_pos_rate=1.0;
+  pp->kap_neg_rate=1.0;
   for(i=0;i<nr;i++) {
     for(j=0;j<nc;j++) {
       pp->poe_mat[i][j]=0.0;
-      pp->phat_pos[i][j]=0.0;
-      pp->phat_neg[i][j]=0.0;
+      pp->phat_pos[i][j]=0.2;
+      pp->phat_neg[i][j]=0.2;
     }
   }
 }
