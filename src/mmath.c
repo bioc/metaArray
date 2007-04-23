@@ -67,7 +67,7 @@ double vec_var(const double *vec, int len) {
 
 double xlogy(const double x, const double y) 
 {
-  double y2;
+  /* double y2; */
   /* y2=(((y<=0.0) & (y > -0.001)) ? 1e- : y);*/
   return x*log(y);
 }

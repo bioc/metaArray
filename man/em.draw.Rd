@@ -9,7 +9,7 @@
     4) progression of log-likelihood during the fit
 }
 \usage{
-  em.draw(vec, cl=NULL, threshold=0.0001)
+  em.draw(vec, cl, threshold=0.0001)
   #em.draw(vec, cl=1-metastasis, threshold=0.0001)
 }
 \arguments{

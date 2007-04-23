@@ -13,7 +13,7 @@
 \usage{
   poe.mcmc(AA, NN = NULL, id = NULL, M = 2000, kap.min=3.0,
       logdata=FALSE, stepsize=0.5, 
-      centersample = TRUE, centergene = TRUE, generatestarts = TRUE, start.method = 1,
+      centersample = FALSE, centergene = FALSE, generatestarts = TRUE, start.method = 1,
       startobject = R0, collapse.to.two = FALSE, burnin=200,
       collapse.window=50, converge.threshold=0.01,
       PR = list(alpha.mm = 0, alpha.sd = 100, mu.mm = 0, mu.sd = 100,
