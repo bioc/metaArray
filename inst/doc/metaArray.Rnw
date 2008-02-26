@@ -54,13 +54,13 @@ lapointe.poe <- lapointe.poe[match(common, rownames(lapointe.poe)),]
 vars <- list("var1","var2")
 names(vars) <- names(chen.spl)
 pdata1 <- new("phenoData", pData = chen.spl, varLabels = vars)
-sample1 <- new("exprSet", exprs=chen.poe, phenoData = pdata1)
+sample1 <- new("ExpressionSet", exprs=chen.poe, phenoData = pdata1)
 names(vars) <- names(garber.spl)
 pdata2 <- new("phenoData", pData = garber.spl, varLabels = vars)
-sample2 <- new("exprSet", exprs=garber.poe, phenoData = pdata2)
+sample2 <- new("ExpressionSet", exprs=garber.poe, phenoData = pdata2)
 names(vars) <- names(lapointe.spl)
 pdata3 <- new("phenoData", pData = lapointe.spl, varLabels = vars)
-sample3 <- new("exprSet", exprs=lapointe.poe, phenoData = pdata3)
+sample3 <- new("ExpressionSet", exprs=lapointe.poe, phenoData = pdata3)
 merged <- mergeExprs(sample1,sample2,sample3)
 @ 
 
@@ -156,7 +156,6 @@ The strengths of our implementation are the following. 1) it allows us to combin
 %\newblock\textit{Nature} 2002 Jan 31; 415(6871):530--6.
 
 \end{thebibliography}
-
 
 
 
