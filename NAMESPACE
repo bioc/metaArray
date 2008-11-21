@@ -1,0 +1,3 @@
+import(Biobase,MergeMaid)
+export(poe.mcmc, poe.em, intcor)
+exportPattern("^[^\\.]")
