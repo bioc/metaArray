@@ -1,8 +1,8 @@
 Package: metaArray
 Title: Integration of Microarray Data for Meta-analysis
-Version: 1.19.0
+Version: 1.19.1
 Author: Debashis Ghosh <ghoshd@umich.edu> Hyungwon Choi <hwchoi@umich.edu>
-Depends: MergeMaid
+Imports: Biobase, MergeMaid, graphics, stats
 biocViews: Microarray, Statistics, DifferentialExpression
 Description: 1) Data transformation for meta-analysis of microarray Data:
                  Transformation of gene expression data to signed probability scale (MCMC/EM methods)

@@ -1,3 +1,7 @@
-import(Biobase,MergeMaid)
+importMethodsFrom(Biobase, exprs, pData)
+importMethodsFrom(MergeMaid, hist, intersection, plot)
+importFrom(graphics, abline, lines, par)
+importFrom(stats, dnorm, dunif, kmeans, median, runif, var)
+
 export(poe.mcmc, poe.em, intcor)
 exportPattern("^[^\\.]")
