@@ -5,3 +5,7 @@ importFrom(stats, dnorm, dunif, kmeans, median, runif, var)
 
 export(poe.mcmc, poe.em, intcor)
 exportPattern("^[^\\.]")
+
+useDynLib('metaArray')
+
+
