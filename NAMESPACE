@@ -1,3 +1,4 @@
+useDynLib("metaArray")
 importMethodsFrom(Biobase, exprs, pData)
 importMethodsFrom(MergeMaid, hist, intersection, plot)
 importFrom(graphics, abline, lines, par)
