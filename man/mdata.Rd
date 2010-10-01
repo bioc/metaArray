@@ -9,7 +9,6 @@
 \alias{lapointe}
 \alias{lapointe.poe}
 \alias{lapointe.spl}
-\docType{instance}
 \title{metaArray sample dataset}
 \description{ Three datasets from liver, lung, and prostate cancer microarrays. 
 Please refer to the bibliography in the vignette. Chen (30 primary, 9 metastatic), 
