@@ -27,7 +27,7 @@ referenced to this distribution.}
   A data.frame with matched genes, Z-scores and p-values will result.
 }
 \references{J.Wang et al, Bioinformatics 2004 Nov 22;20(17):3166-78}
-\author{Debashis Ghosh <ghoshd@umich.edu>, Hyungwon Choi <hwchoi@umich.edu>}
+\author{Debashis Ghosh <ghoshd@psu.edu>, Hyungwon Choi <hyung_won_choi@nuhs.edu.sg>}
 \examples{
  # Zscore(merged, pheno=NULL, permute=10000, verbose=FALSE)
 }

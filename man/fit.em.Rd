@@ -27,7 +27,7 @@
     average across the samples}
   \item{lik.rec }{Trajectory of likelihood during EM }
 }
-\author{Debashis Ghosh <ghoshd@umich.edu>, Hyungwon Choi <hwchoi@umich.edu> }
+\author{Debashis Ghosh <ghoshd@psu.edu>, Hyungwon Choi <hyung_won_choi@nuhs.edu.sg> }
 \examples{
   
 }

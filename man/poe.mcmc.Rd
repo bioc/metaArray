@@ -23,11 +23,13 @@
 }
 \arguments{
   \item{AA}{Matrix or \code{exprs} from an \code{ExpressionSet} object.}
-  \item{NN}{Phenotypic label of arrays. If provided, all genes from arrays with label 1 are
-            forced e=0 in all iterations. A gene with e=0 is involved in sampling of 
-            mu and alpha. For arrays with label 0, e is assumed to be unknown, thus sampled
-            differently at every iteration. If this slot is left NULL, all arrays will be marked 0, 
-            so that the effect of the latter above applies to all arrays.}        
+  \item{NN}{Phenotypic label of arrays. Samples from the reference group (normal phenotype) 
+            must be labeled as 1. For instance, if you wish to identify differentially expressed
+            genes between cancer and normal samples, mark normal as 1 and cancer as 0. Then the 
+            high probability hits indicate over or under-expressed genes in specific samples 
+            with respect to the gene expression distribution of the normal samples.
+            Alternatively, you may leave this blank if you wish to get the probability of high and low
+            expression from the mixture distribution using all samples not relying on the known sample information.}
   \item{M}{Number of MCMC iterations after burn-in.}
 }
 \value{
@@ -36,7 +38,7 @@ scale of [-1,1].}
   \item{Other values }{Posterior median estimates of parameters. Please refer to POE package for details.}
 }
 \references{G. Parmigiani et al, JRSS, 64:717-736, 2002 or URL: http://astor.som.jhmi.edu/poe/}
-\author{Debashis Ghosh <ghoshd@umich.edu>, Hyungwon Choi <hwchoi@umich.edu>}
+\author{Debashis Ghosh <ghoshd@psu.edu>, Hyungwon Choi <hyung_won_choi@nuhs.edu.sg>}
 \examples{
   # poe.mat <- poe.mcmc(AA=exprmat, NN=clvec, M=10000)
   # One can also provide different hyperparameter values. 

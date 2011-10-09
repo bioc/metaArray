@@ -22,7 +22,7 @@ datasets.}
   \item{pair.cor}{A matrix of correlations for each gene in every pair of two studies}
 }
 \references{ Clinical Cancer Research, Parmigiani et al. 10(9):2922-2927, 2004 }
-\author{Debashis Ghosh <ghoshd@umich.edu>, Hyungwon Choi <hwchoi@umich.edu> }
+\author{Debashis Ghosh <ghoshd@psu.edu>, Hyungwon Choi <hyung_won_choi@nuhs.edu.sg> }
 \examples{
  #intcor(merged)
 }

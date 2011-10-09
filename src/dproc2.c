@@ -21,7 +21,7 @@
 
 void malloc_array2(ARRAY2 *expr)
 {
-  static int i, nr, nc;
+  int i, nr, nc;
   nr=expr->nrow;
   nc=expr->ncol;
   assert(expr->d=(double **) Calloc(nr, double *));
@@ -43,7 +43,7 @@ void malloc_array2(ARRAY2 *expr)
 
 void free_array2(ARRAY2 *expr)
 {
-  static int i;
+  int i;
   /* free sequentially for all layers */
   for(i=0;i<expr->nrow;i++) {
     Free(expr->d[i]);
@@ -94,7 +94,7 @@ void get_meanvar(ARRAY2 *expr)
 
 void init_ARRAY2(double *d, int *nrow, int *ncol, int *label, ARRAY2 *expr) 
 {
-  static int i,j;
+  int i,j;
   expr->nrow=*nrow;
   expr->ncol=*ncol;
   malloc_array2(expr);
@@ -111,9 +111,9 @@ void init_ARRAY2(double *d, int *nrow, int *ncol, int *label, ARRAY2 *expr)
 
 void init_ARRAYS(double *exprs, int *ndata, int *nrow, int *ncol, int *labels, ARRAY2 data[])
 {
-  static int i,j,k,cum1,cum2;
-  static int *cl;
-  static double *expr;
+  int i,j,k,cum1,cum2;
+  int *cl;
+  double *expr;
   cum1=0;
   cum2=0;
   for(i=0;i<*ndata;i++) {
@@ -133,11 +133,11 @@ void init_ARRAYS(double *exprs, int *ndata, int *nrow, int *ncol, int *labels, A
 
 void do_LOWESS(double *x, double *y, int len) 
 {
-  static double *tx, *ty /* *tmp  */ ;
-  static double *ys, *rw, *res;
-  static int *ind;
-  static int i,j, nsteps,k;
-  static double delta, f /* max, min  */;
+  double *tx, *ty /* *tmp  */ ;
+  double *ys, *rw, *res;
+  int *ind;
+  int i,j, nsteps,k;
+  double delta, f /* max, min  */;
   f=2.0/3.0;
   delta = (vec_max(x,len)-vec_min(x,len))*0.01;
   nsteps=3;
@@ -176,9 +176,9 @@ void do_LOWESS(double *x, double *y, int len)
 }
 
 void weighted_contrast(ARRAY2 data[], int *nd, double *z, int *nrow) {
-  static int i,j,k;
-  static double *denom;
-  static double diff, va;
+  int i,j,k;
+  double *denom;
+  double diff, va;
   int n0,n1;
   assert(denom=(double *) Calloc(*nrow,double));
   for(i=0;i<*nrow;i++) {

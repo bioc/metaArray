@@ -54,8 +54,8 @@ void poe_fit(double *expr, int *label, double *prior, double *posterior, int *nr
       for(k=0;k<_SKIP_;k++) poe_one_iter(&data,&pr,&pp);
     }
     poe_one_iter(&data,&pr,&pp);
-    update_CH(&ch,&pp,mm,numiter,nrow,ncol);    
-    if((mm+1)%100==0) Rprintf("%i%s",(mm+1), "\n");
+    if((mm+1)%10 == 0) update_CH(&ch,&pp,mm,numiter,nrow,ncol);    
+    if((mm+1)%100 == 0) Rprintf("%i%s",(mm+1), "\n");
   }
   /***********************************************/
   /*** Summarize posterior estimates by median ***/
@@ -242,7 +242,7 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
     nnn=0.0;
     for(j=0;j<nc;j++) nnn +=(1.0 - fabs(ee[gg][j]));
 
-    if(!ISNA(nnn) & !ISNAN(nnn) & R_FINITE(nnn) & (nnn>0.0)) {
+    if(!ISNA(nnn) && !ISNAN(nnn) && R_FINITE(nnn) && (nnn>0.0)) {
       ct=0;
       for(j=0;j<nc;j++) ct+=((int) (ee[gg][j]==0.0));
       /* mmm=(double *) Calloc(ct,double); */
@@ -261,7 +261,7 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
       post_var=1.0/(nnn/pow(pp->sigma_g[gg],2.0)+1.0/pp->tausqinv);
       post_mean=(nnn*tmp1+pp->mu/pow(pp->tausqinv,2.0))*post_var;
       mu_g[gg] = rnorm(post_mean,sqrt(post_var));
-      /* mu_g[gg] = ((!R_FINITE(tmp1)) | (ISNA(tmp1)) | (ISNAN(tmp1)) ? pp->mu_g[gg] : tmp1); */
+      /* mu_g[gg] = ((!R_FINITE(tmp1)) || (ISNA(tmp1)) || (ISNAN(tmp1)) ? pp->mu_g[gg] : tmp1); */
       /* Free(mmm); */ 
     }
     else {
@@ -282,7 +282,7 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
     tmp1=pgamma(pow(_KAP_MIN_/kappa_min,2.0),post_a,1.0/post_b,1.0,0);
     tmp=runif(tmp1,1.0);
     tmpq=qgamma(tmp,post_a,1.0/post_b,1.0,0);
-    sigma_g[gg]= ((R_FINITE(tmpq) & (!ISNA(tmpq)) & (!ISNAN(tmpq))) ? sqrt(1.0/tmpq) : pp->sigma_g[gg]); 
+    sigma_g[gg]= ((R_FINITE(tmpq) && (!ISNA(tmpq)) && (!ISNAN(tmpq))) ? sqrt(1.0/tmpq) : pp->sigma_g[gg]); 
   }    
     /* if(ISNA(sigma_g[gg]) || ISNAN(sigma_g[gg])) 
        print error to stderr */
@@ -291,7 +291,7 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
     nnn=0.0;
 
     for(i=0;i<nr;i++) nnn += (1.0 - fabs(ee[i][tt]));
-    if((!ISNA(nnn)) & (!ISNAN(nnn)) & (R_FINITE(nnn)) & (nnn > 0.0)) {
+    if((!ISNA(nnn)) && (!ISNAN(nnn)) && (R_FINITE(nnn)) && (nnn > 0.0)) {
       ct=0;
       for(i=0;i<nr;i++) ct+=((int) (ee[i][tt]==0.0));
       /* sss=(double *) Calloc(ct,double);
@@ -425,17 +425,17 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
     tmp1=dnorm4(logit(pi_pos_g[gg]),pp->pil_pos_mean,sqrt(pp->pil_pos_prec),0);
     tmp2=dnorm4(logit(pp->pi_pos_g[gg]),pp->pil_pos_mean,sqrt(pp->pil_pos_prec),0);
     aaa=tmp1/tmp2;
-    if(ISNAN(aaa) | ISNA(aaa) | !R_FINITE(aaa)) aaa=0.0;
+    if(ISNAN(aaa) || ISNA(aaa) || !R_FINITE(aaa)) aaa=0.0;
     tmpint=0;
     for(j=0;j<nc;j++) tmpint += expr->label[j];
-    if(tmpint==0 & pi_pos_g[gg]>0.5) pi_pos_g[gg]=pp->pi_pos_g[gg];
+    if(tmpint==0 && pi_pos_g[gg]>0.5) pi_pos_g[gg]=pp->pi_pos_g[gg];
     if(aaa<runif(0,1)) pi_pos_g[gg]=pp->pi_pos_g[gg];    
     tmp1=dnorm4(logit(pi_neg_g[gg]),pp->pil_neg_mean,sqrt(pp->pil_neg_prec),0);
     tmp2=dnorm4(logit(pp->pi_neg_g[gg]),pp->pil_neg_mean,sqrt(pp->pil_neg_prec),0);
     aaa=tmp1/tmp2;
-    if(ISNAN(aaa) | ISNA(aaa) | !R_FINITE(aaa)) aaa=0.0;
-    if(tmpint==0 & pi_neg_g[gg] > 0.5) pi_neg_g[gg]=pp->pi_neg_g[gg];
-    if(aaa<runif(0,1) | pi_pos_g[gg]+pi_neg_g[gg] > 1.0) pi_neg_g[gg]=pp->pi_neg_g[gg];    
+    if(ISNAN(aaa) || ISNA(aaa) || !R_FINITE(aaa)) aaa=0.0;
+    if(tmpint==0 && pi_neg_g[gg] > 0.5) pi_neg_g[gg]=pp->pi_neg_g[gg];
+    if(aaa<runif(0,1) || pi_pos_g[gg]+pi_neg_g[gg] > 1.0) pi_neg_g[gg]=pp->pi_neg_g[gg];    
   } 
 
 
@@ -450,7 +450,7 @@ void poe_one_iter(ARRAY *expr, PR *pr, PP *pp)
   for(i=0;i<nr;i++) tmp1+=pow(mu_g[i]-pp->mu,2.0);
   post_b=pr->tausqinv_bb+0.5*tmp1;
   pp->tausqinv=rgamma(post_a,1.0)/post_b;
-  /*pp->tausqinv = (!R_FINITE(tmp) | ISNA(tmp) || ISNAN(tmp) ? pp->tausqinv : tmp);*/
+  /*pp->tausqinv = (!R_FINITE(tmp) || ISNA(tmp) || ISNAN(tmp) ? pp->tausqinv : tmp);*/
   pp->kap_pos_rate=rgamma(((double)(nr+1)),1.0/(pr->kap_pri_rate+vec_sum(kappa_pos_g,nr)));
   /* pp->kap_pos_rate=(!R_FINITE(tmp) || ISNA(tmp) || ISNAN(tmp) ? pp->kap_pos_rate : tmp); */
   pp->kap_neg_rate=rgamma(((double)(nr+1)),1.0/(pr->kap_pri_rate+vec_sum(kappa_neg_g,nr)));

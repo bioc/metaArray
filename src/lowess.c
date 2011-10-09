@@ -32,17 +32,17 @@
 #endif
 #include "meta.h"
 
-static double fsquare(double x)
+ double fsquare(double x)
 {
     return x * x;
 }
 
-static double fcube(double x)
+ double fcube(double x)
 {
     return x * x * x;
 }
 
-static void lowest(double *x, double *y, int n, double *xs, double *ys,
+ void lowest(double *x, double *y, int n, double *xs, double *ys,
 	int nleft, int nright, double *w,
 	Rboolean userw, double *rw, Rboolean *ok)
 {
@@ -126,7 +126,7 @@ static void lowest(double *x, double *y, int n, double *xs, double *ys,
     }
 }
 
-static
+
 void clowess(double *x, double *y, int n,
 	     double f, int nsteps, double delta,
 	     double *ys, double *rw, double *res)

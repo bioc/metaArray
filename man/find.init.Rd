@@ -16,7 +16,7 @@
 \value{
   \item{z}{A vector of 0/1, initial values of the EM algorithm }
 }
-\author{Debashis Ghosh <ghoshd@umich.edu>, Hyungwon Choi <hwchoi@umich.edu> }
+\author{Debashis Ghosh <ghoshd@psu.edu>, Hyungwon Choi <hyung_won_choi@nuhs.edu.sg> }
 \examples{
 }
 \keyword{internal}

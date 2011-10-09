@@ -11,13 +11,13 @@
   \item{mat}{Gene expression data matrix }
   \item{cl}{A vector of 0s and 1s. Use 1 for normal phenotype and 0 for
     non-normal phenotype. If all samples are of unknown phenotype,
-    give vectors of 0. }
+    give vectors of 0. This is identical to the poe.mcmc function. }
   \item{threshold}{Criterion of convergence in likelihood }
   \item{every}{Progress of estimation is reported at every integer mode of the value 'every' }
 }
 \value{
   A data matrix of transformed expression will result.
 }
-\author{Debashis Ghosh <ghoshd@umich.edu>, Hyungwon Choi <hwchoi@umich.edu> }
+\author{Debashis Ghosh <ghoshd@psu.edu>, Hyungwon Choi <hyung_won_choi@nuhs.edu.sg> }
 \examples{}
 \keyword{internal}
