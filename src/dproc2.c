@@ -24,19 +24,19 @@ void malloc_array2(ARRAY2 *expr)
   int i, nr, nc;
   nr=expr->nrow;
   nc=expr->ncol;
-  assert(expr->d=(double **) Calloc(nr, double *));
-  assert(expr->label=(int *) Calloc(nc, int));
-  assert(expr->mean0=(double *) Calloc(nr, double));
-  assert(expr->var0=(double *) Calloc(nr, double));
-  assert(expr->mean1=(double *) Calloc(nr, double));
-  assert(expr->var1=(double *) Calloc(nr, double));
-  assert(expr->mean_diff=(double *) Calloc(nr, double));
-  assert(expr->var_sum=(double *) Calloc(nr, double));
+  expr->d=(double **) Calloc(nr, double *);
+  expr->label=(int *) Calloc(nc, int);
+  expr->mean0=(double *) Calloc(nr, double);
+  expr->var0=(double *) Calloc(nr, double);
+  expr->mean1=(double *) Calloc(nr, double);
+  expr->var1=(double *) Calloc(nr, double);
+  expr->mean_diff=(double *) Calloc(nr, double);
+  expr->var_sum=(double *) Calloc(nr, double);
   /* Initialize */
   /* memset(expr->label, 0, sizeof(int)*nc); */
   for(i=0;i<nc;i++) expr->label[i]=0;
   for(i=0;i<nr;i++) {
-    assert(expr->d[i]=(double *) Calloc(nc, double));
+    expr->d[i]=(double *) Calloc(nc, double);
   }
 }
 
@@ -141,12 +141,12 @@ void do_LOWESS(double *x, double *y, int len)
   f=2.0/3.0;
   delta = (vec_max(x,len)-vec_min(x,len))*0.01;
   nsteps=3;
-  assert(ind = (int *) Calloc(len,int));
-  assert(tx = (double *) Calloc(len,double));
-  assert(ty = (double *) Calloc(len,double));
-  assert(ys = (double *) Calloc(len,double));
-  assert(rw = (double *) Calloc(len,double));
-  assert(res = (double *) Calloc(len,double));
+  ind = (int *) Calloc(len,int);
+  tx = (double *) Calloc(len,double);
+  ty = (double *) Calloc(len,double);
+  ys = (double *) Calloc(len,double);
+  rw = (double *) Calloc(len,double);
+  res = (double *) Calloc(len,double);
   for(i=0;i<len;i++) {
     ind[i]=i;
     tx[i]=x[i];  
@@ -180,7 +180,7 @@ void weighted_contrast(ARRAY2 data[], int *nd, double *z, int *nrow) {
   double *denom;
   double diff, va;
   int n0,n1;
-  assert(denom=(double *) Calloc(*nrow,double));
+  denom=(double *) Calloc(*nrow,double);
   for(i=0;i<*nrow;i++) {
     z[i] = 0.0;
     denom[i] = 0.0;
@@ -210,14 +210,14 @@ void permute_pval(ARRAY2 data[], int *nd, int *nr, int *nc, int *numperm, double
   int i,j,k;
   int tmp;
 
-  assert(zz = (double *) Calloc(*nr,double)); 
-  assert(permu = (double **) Calloc(*numperm,double *));
+  zz = (double *) Calloc(*nr,double); 
+  permu = (double **) Calloc(*numperm,double *);
   for(i=0;i<*numperm;i++) {
-    assert(permu[i] = (double *) Calloc(*nr,double));
+    permu[i] = (double *) Calloc(*nr,double);
   }
-  assert(cl = (int **) Calloc(*nd,int *));
+  cl = (int **) Calloc(*nd,int *);
   for(i=0;i<*nd;i++) {    
-    assert(cl[i] = (int *) Calloc(nc[i],int));
+    cl[i] = (int *) Calloc(nc[i],int);
   }
   for(i=0;i<*nd;i++) {
     for(j=0;j<nc[i];j++) {

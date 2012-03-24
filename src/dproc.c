@@ -25,16 +25,16 @@ void malloc_array(ARRAY *expr)
   int i, nr, nc;
   nr=expr->nrow;
   nc=expr->ncol;
-  /* assert(expr->id=(char **) Calloc(nr, char *)); */
-  assert(expr->d=(double **) Calloc(nr, double *));
-  assert(expr->label=(int *) Calloc(nc, int));
+  /* expr->id=(char **) Calloc(nr, char *); */
+  expr->d=(double **) Calloc(nr, double *);
+  expr->label=(int *) Calloc(nc, int);
 
   /* Initialize */
   memset(expr->label, 0, sizeof(int)*nc);
   for(i=0;i<nc;i++) expr->label[i]=0;
   for(i=0;i<nr;i++) {
-    /*  assert(expr->id[i]=(char *) Calloc(MAX_ID, char)); */
-    assert(expr->d[i]=(double *) Calloc(nc, double));
+    /*  expr->id[i]=(char *) Calloc(MAX_ID, char); */
+    expr->d[i]=(double *) Calloc(nc, double);
   }
 }
 
@@ -43,20 +43,20 @@ void malloc_PP(PP *pp, int *nrow, int *ncol)
   int i, nr, nc;
   nr=*nrow;
   nc=*ncol;
-  assert(pp->alpha_t=(double *) Calloc(nc, double));
-  assert(pp->mu_g=(double *) Calloc(nr, double));
-  assert(pp->kappa_pos_g=(double *) Calloc(nr, double));
-  assert(pp->kappa_neg_g=(double *) Calloc(nr, double));
-  assert(pp->sigma_g=(double *) Calloc(nr, double));
-  assert(pp->pi_pos_g=(double *) Calloc(nr, double));
-  assert(pp->pi_neg_g=(double *) Calloc(nr, double));
-  assert(pp->poe_mat=(double **) Calloc(nr, double *));
-  assert(pp->phat_pos=(double **) Calloc(nr, double *));
-  assert(pp->phat_neg=(double **) Calloc(nr, double *));
+  pp->alpha_t=(double *) Calloc(nc, double);
+  pp->mu_g=(double *) Calloc(nr, double);
+  pp->kappa_pos_g=(double *) Calloc(nr, double);
+  pp->kappa_neg_g=(double *) Calloc(nr, double);
+  pp->sigma_g=(double *) Calloc(nr, double);
+  pp->pi_pos_g=(double *) Calloc(nr, double);
+  pp->pi_neg_g=(double *) Calloc(nr, double);
+  pp->poe_mat=(double **) Calloc(nr, double *);
+  pp->phat_pos=(double **) Calloc(nr, double *);
+  pp->phat_neg=(double **) Calloc(nr, double *);
   for(i=0;i<nr;i++) {
-    assert(pp->poe_mat[i]=(double *) Calloc(nc, double));
-    assert(pp->phat_pos[i]=(double *) Calloc(nc, double));
-    assert(pp->phat_neg[i]=(double *) Calloc(nc, double));
+    pp->poe_mat[i]=(double *) Calloc(nc, double);
+    pp->phat_pos[i]=(double *) Calloc(nc, double);
+    pp->phat_neg[i]=(double *) Calloc(nc, double);
   }
 }
 
@@ -112,16 +112,16 @@ void malloc_CH(CH *ch, int *nrow, int *ncol, int *niter)
   nr=*nrow;
   nc=*ncol;
   num=*niter;
-  assert(ch->alpha_t=(double *) Calloc(nc,double));
-  assert(ch->mu_g=(double *) Calloc(nr,double ));
-  assert(ch->kappa_pos_g=(double *) Calloc(nr,double ));
-  assert(ch->kappa_neg_g=(double *) Calloc(nr,double ));
-  assert(ch->sigma_g=(double *) Calloc(nr,double ));
-  assert(ch->pi_pos_g=(double *) Calloc(nr,double ));
-  assert(ch->pi_neg_g=(double *) Calloc(nr,double ));
-  assert(ch->poe_mat=(double **) Calloc(nr,double *));
+  ch->alpha_t=(double *) Calloc(nc,double);
+  ch->mu_g=(double *) Calloc(nr,double );
+  ch->kappa_pos_g=(double *) Calloc(nr,double );
+  ch->kappa_neg_g=(double *) Calloc(nr,double );
+  ch->sigma_g=(double *) Calloc(nr,double );
+  ch->pi_pos_g=(double *) Calloc(nr,double );
+  ch->pi_neg_g=(double *) Calloc(nr,double );
+  ch->poe_mat=(double **) Calloc(nr,double *);
   for(i=0;i<nr;i++) {
-    assert(ch->poe_mat[i]=(double *) Calloc(nc,double));
+    ch->poe_mat[i]=(double *) Calloc(nc,double);
   }
 
   ch->accept = 0.0;
@@ -448,7 +448,7 @@ double get_median(double *base, int len)
   double *new_vec;
   double med;
   int i, pk;
-  assert(new_vec=(double *) Calloc(len,double));  
+  new_vec=(double *) Calloc(len,double);  
   for(i=0;i<len;i++) {
     new_vec[i]=base[i]; 
   }

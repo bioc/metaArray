@@ -37,9 +37,9 @@ void intcor(double *exprs, int *labels, int *nd, int *nr, int *nc, double *corre
   /*** calculates mu and stdev     ***/
   /***********************************/
   init_ARRAYS(exprs,nd,nr,nc,labels,data);  
-  assert(vec = (double **) Calloc(*nd, double *));
+  vec = (double **) Calloc(*nd, double *);
   for(i=0;i<*nd;i++) {
-    assert(vec[i] = (double *) Calloc(*nr-1, double));
+    vec[i] = (double *) Calloc(*nr-1, double);
   }  
   Rprintf("%s", "Gene-specific Integrative Correlations\n");
 
@@ -53,8 +53,8 @@ void intcor(double *exprs, int *labels, int *nd, int *nr, int *nc, double *corre
       }
     }
     for(j=0;j<*nd;j++) {
-      assert(tmp1=(double *) Calloc(data[j].ncol, double)); 
-      assert(tmp2=(double *) Calloc(data[j].ncol, double));
+      tmp1=(double *) Calloc(data[j].ncol, double); 
+      tmp2=(double *) Calloc(data[j].ncol, double);
       ct=0; 
       id=0;
       for(k=0;k<data[j].ncol;k++) tmp1[k]=data[j].d[i][k];
