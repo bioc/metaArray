@@ -1,6 +1,6 @@
 Package: metaArray
 Title: Integration of Microarray Data for Meta-analysis
-Version: 1.50.0
+Version: 1.51.0
 Author: Debashis Ghosh <ghoshd@psu.edu> Hyungwon Choi
         <hyung_won_choi@nuhs.edu.sg>
 Imports: Biobase, MergeMaid, graphics, stats
