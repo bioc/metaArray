@@ -1,6 +1,6 @@
 Package: metaArray
 Title: Integration of Microarray Data for Meta-analysis
-Version: 1.67.0
+Version: 1.67.1
 Author: Debashis Ghosh <ghoshd@psu.edu> Hyungwon Choi
         <hyung_won_choi@nuhs.edu.sg>
 Imports: Biobase, MergeMaid, graphics, stats
@@ -12,3 +12,4 @@ Description: 1) Data transformation for meta-analysis of microarray
 Maintainer: Hyungwon Choi <hyung_won_choi@nuhs.edu.sg>
 License: LGPL-2
 biocViews: Microarray, DifferentialExpression
+PackageStatus: Deprecated
